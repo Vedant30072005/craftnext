@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Browse the full CraftNext collection - filter handmade art by category, price and rating.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Collection – CraftNext">
+<meta property="og:description" content="Browse the full CraftNext collection - filter handmade art by category, price and rating.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Collection – CraftNext</title>
+<link rel="stylesheet" href="style.css?v=5">
+<style>
+.collection-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+}
+.collection-header-row h2 {
+    margin-bottom: 0;
+}
+.filter-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+.control-group label {
+    color: var(--muted);
+    white-space: nowrap;
+}
+.control-group select {
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    font: inherit;
+    font-size: 13px;
+    background: var(--surface);
+    color: var(--ink);
+    outline: none;
+    cursor: pointer;
+}
+.control-group select:focus {
+    border-color: var(--ink);
+}
+.control-group input[type="range"] {
+    width: 130px;
+    cursor: pointer;
+    accent-color: var(--ink);
+}
+</style>
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+
+    <div class="nav-links">
+        <a href="index.html">← Back to Home</a>
+        <span id="navUser"></span>
+    </div>
+</header>
+
+
+<section>
+    <div class="collection-header-row">
+        <h2 id="collectionTitle">Collection</h2>
+        <div class="filter-controls">
+            <div class="control-group">
+                <label for="sortBy">Sort By</label>
+                <select id="sortBy" onchange="applyFiltersAndSort()">
+                    <option value="default">Default</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="rating">Top Rated</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="priceMax">Max Price: ₹<span id="priceLimitVal">5,000</span></label>
+                <input type="range" id="priceMax" min="0" max="5000" step="50" value="5000" oninput="updatePriceLimit(this.value)">
+            </div>
+        </div>
+    </div>
+    <div class="product-grid" id="productContainer"></div>
+</section>
+
+
+<!-- Floating Cart -->
+<div class="floating-cart" onclick="location.href='cart.html'">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
+    <span id="cartCount">0</span>
+</div>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+
+<script>
+
+/* ================= NAVBAR AUTH ================= */
+
+const navUser = document.getElementById("navUser");
+
+const user = getUser(); // guarded parse from api.js
+
+if(user){
+
+    navUser.innerHTML = `
+        <span style="margin-left:10px;">Hi, ${user.name}</span>
+        ${user.role === "admin" ? '<a href="admin.html" style="margin-left:10px;">Admin Panel</a>' : ""}
+        <a href="#" id="logoutBtn" style="margin-left:10px;">Logout</a>
+    `;
+
+    document.getElementById("logoutBtn").onclick = function(e){
+        e.preventDefault();
+        Auth.logout();
+    };
+
+}else{
+
+    navUser.innerHTML = `
+        <a href="login.html" style="margin-left:10px;">Login</a>
+    `;
+}
+
+
+/* ========= LOAD CATEGORY FROM API ========= */
+
+const params = new URLSearchParams(window.location.search);
+const cat = params.get("cat");
+
+const titleEl = document.getElementById("collectionTitle");
+titleEl.innerText = cat
+    ? cat.charAt(0).toUpperCase() + cat.slice(1) + " Collection"
+    : "All Products";
+
+const container = document.getElementById("productContainer");
+let loadedProducts = [];
+
+function updatePriceLimit(val) {
+    document.getElementById("priceLimitVal").innerText = Number(val).toLocaleString("en-IN");
+    applyFiltersAndSort();
+}
+
+function applyFiltersAndSort() {
+    const sortBy = document.getElementById("sortBy").value;
+    const priceMax = Number(document.getElementById("priceMax").value);
+
+    let list = [...loadedProducts];
+
+    // Filter by max price
+    list = list.filter(p => Number(p.price) <= priceMax);
+
+    // Sort
+    if (sortBy === "price-asc") {
+        list.sort((a, b) => Number(a.price) - Number(b.price));
+    } else if (sortBy === "price-desc") {
+        list.sort((a, b) => Number(b.price) - Number(a.price));
+    } else if (sortBy === "rating") {
+        list.sort((a, b) => Number(b.rating || 5) - Number(a.rating || 5));
+    }
+
+    renderList(list);
+}
+
+function renderList(list) {
+    if (!list.length) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>No products match the selected filters.</p></div>`;
+        return;
+    }
+    container.innerHTML = "";
+    list.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.innerHTML = productCardHTML(p);
+        container.appendChild(card);
+    });
+    renderWishlistIcons();
+}
+
+(async () => {
+    renderSkeletons(container, 8);
+    try {
+        const products = await Products.getAll(cat ? { category: cat } : {});
+        cacheProducts(products);
+        loadedProducts = products;
+
+        if (!products.length) {
+            container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>No products in this category yet.</p></div>`;
+            return;
+        }
+
+        // Dynamically adjust price limit slider to match maximum price in results
+        const prices = products.map(p => Number(p.price));
+        const maxPrice = prices.length ? Math.ceil(Math.max(...prices) / 100) * 100 : 5000;
+        const slider = document.getElementById("priceMax");
+        if (slider) {
+            slider.max = maxPrice;
+            slider.value = maxPrice;
+            document.getElementById("priceLimitVal").innerText = maxPrice.toLocaleString("en-IN");
+        }
+
+        applyFiltersAndSort();
+    } catch (err) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>Could not load products. Make sure the backend is running.</p></div>`;
+    }
+})();
+
+</script>
+
+</body>
+</html>

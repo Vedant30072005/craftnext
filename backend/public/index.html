@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Launcher</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">Backend + Frontend</p>
+      <h1>Project running in Chrome</h1>
+      <p class="lede">
+        The backend is serving this page and exposing a health API plus the asset folders in the workspace.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="/api/health" target="_blank" rel="noreferrer">Check backend</a>
+        <a class="button secondary" href="/api/collections" target="_blank" rel="noreferrer">View collections</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Asset folders</h2>
+        <span id="status">Loading…</span>
+      </div>
+      <div id="collections" class="collections"></div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

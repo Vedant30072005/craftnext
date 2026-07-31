@@ -1,0 +1,135 @@
+<!-- this is wishlist.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Your saved handmade favourites on CraftNext.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Your Wishlist – CraftNext">
+<meta property="og:description" content="Your saved handmade favourites on CraftNext.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Your Wishlist – CraftNext</title>
+<link rel="stylesheet" href="style.css?v=5">
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+
+    <div class="nav-links">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        <span id="navUser"></span>
+    </div>
+</header>
+
+
+<!-- WISHLIST SECTION -->
+
+<section class="products">
+
+<h2>Your Wishlist</h2>
+
+<div class="product-grid" id="wishGrid"></div>
+
+</section>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+
+
+<script>
+
+/* ================= LOGIN GUARD ================= */
+
+const user = getUser(); // guarded parse from api.js
+
+if(!user){
+alert("Please login to view your wishlist");
+window.location.href = "login.html";
+}
+
+
+/* ================= NAVBAR AUTH ================= */
+
+const navUser = document.getElementById("navUser");
+
+if(user){
+
+navUser.innerHTML = `
+<span style="margin-left:10px;">Hi, ${user.name}</span>
+${user.role === "admin" ? '<a href="admin.html" style="margin-left:10px;">Admin Panel</a>' : ""}
+<a href="#" id="logoutBtn" style="margin-left:10px;">Logout</a>
+`;
+
+document.getElementById("logoutBtn").onclick = function(e){
+e.preventDefault();
+Auth.logout();
+};
+
+}else{
+
+navUser.innerHTML = `
+<a href="login.html" style="margin-left:10px;">Login</a>
+`;
+
+}
+
+
+/* ================= LOAD WISHLIST FROM API ================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const ids = getWishlist();
+    const grid = document.getElementById("wishGrid");
+
+    if (ids.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Your wishlist is empty</h3><p><a href="index.html">Browse products →</a></p></div>`;
+        return;
+    }
+
+    grid.innerHTML = `<p style="padding:20px;color:#888">Loading…</p>`;
+
+    try {
+        const all = await Products.getAll();
+        cacheProducts(all);
+
+        const idSet = new Set(ids.map(String));
+        const list = all.filter(p => idSet.has(String(p._id)));
+
+        if (!list.length) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Your wishlisted items are no longer available.</h3></div>`;
+            return;
+        }
+
+        grid.innerHTML = "";
+        list.forEach(p => {
+            const card = document.createElement("div");
+            card.className = "product-card";
+            card.innerHTML = productCardHTML(p);
+            grid.appendChild(card);
+        });
+        renderWishlistIcons();
+    } catch (err) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>Could not load wishlist. Make sure the backend is running.</p></div>`;
+    }
+
+});
+
+</script>
+
+
+</body>
+</html>

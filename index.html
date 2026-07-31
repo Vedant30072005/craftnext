@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CraftNext - a handmade marketplace for Indian artisans. Shop Lippan art, mandala clocks, diyas, zharokhas, torans, pipe-cleaner art and puja thalis, direct from small creators.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="CraftNext – Handmade Marketplace">
+<meta property="og:description" content="CraftNext - a handmade marketplace for Indian artisans. Shop Lippan art, mandala clocks, diyas, zharokhas, torans, pipe-cleaner art and puja thalis, direct from small creators.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+
+<title>CraftNext – Handmade Marketplace</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&family=Spline+Sans+Mono:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="style.css?v=5">
+
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<div id="bg-reveal" aria-hidden="true"></div>
+
+<!-- NAVBAR -->
+<header>
+<nav class="navbar">
+
+<a class="brand" href="index.html">CraftNext</a>
+
+<div class="nav-links">
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search products...">
+  <button onclick="doSearch()" aria-label="Search">
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  </button>
+</div>
+
+<a href="index.html">Home</a>
+<a href="#categories">Categories</a>
+<a href="sell.html">Sell</a>
+
+<a href="login.html" id="loginBtn">Login</a>
+<a href="admin.html" id="adminPanelBtn" style="display:none;">Admin Panel</a>
+<a href="#" id="logoutBtn" style="display:none;">Logout</a>
+
+<a href="wishlist.html">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.65-9.5 9-9.5 9Z"/></svg>
+  Wishlist
+</a>
+
+</div>
+
+</nav>
+</header>
+
+
+<!-- HERO -->
+<section class="hero">
+
+<div class="hero-content">
+
+<p class="hero-eyebrow">Handcrafted in India</p>
+
+<h1 class="hero-title"><span class="word">Discover</span> <span class="word">unique,</span> <em class="word">handmade</em> <span class="word">products</span></h1>
+<p>Support small creators and artisans worldwide — every piece is made by hand, not mass-produced.</p>
+
+<div class="hero-actions">
+<button onclick="location.href='#categories'">Start Shopping</button>
+<a href="sell.html" class="btn btn-ghost">Become a Seller</a>
+</div>
+
+<div class="hero-stats">
+<span>
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26L21 9.27l-5 4.87 1.18 6.88L12 17.77l-5.18 3.25L8 14.14 3 9.27l6.1-1.01L12 2z"/></svg>
+Top-rated artisans
+</span>
+<span>
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+Free shipping over ₹999
+</span>
+<span>
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>
+Cash on Delivery
+</span>
+</div>
+
+</div>
+
+<div class="hero-visual" aria-hidden="true">
+<div class="hero-photo-wrap hero-photo-1-wrap">
+<img src="Images/Lippan Art/best1.jpeg" class="hero-photo hero-photo-1" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-2-wrap">
+<img src="Images/Diya Art/1.jpeg" class="hero-photo hero-photo-2" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-3-wrap">
+<img src="Images/Zharokha Art/1.jpeg" class="hero-photo hero-photo-3" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-4-wrap">
+<img src="Images/Clock/clock-mom-1.png" class="hero-photo hero-photo-4" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-5-wrap">
+<img src="Images/Toran/toran-2.png" class="hero-photo hero-photo-5" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-6-wrap">
+<img src="Images/Pipe Cleaner/pipe-cleaner-2.png" class="hero-photo hero-photo-6" alt="">
+</div>
+<div class="hero-photo-wrap hero-photo-7-wrap">
+<img src="Images/Puja Thali/puja-thali-1.png" class="hero-photo hero-photo-7" alt="">
+</div>
+</div>
+
+</section>
+
+
+<!-- BENEFITS -->
+<section class="benefits" aria-label="Why shop with CraftNext">
+<div class="benefits-grid">
+
+<div class="benefit">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.65-9.5 9-9.5 9Z"/></svg>
+<div>
+<h3>Genuinely handmade</h3>
+<p>Every piece is crafted by a real artisan — no mass production.</p>
+</div>
+</div>
+
+<div class="benefit">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+<div>
+<h3>Free shipping over ₹999</h3>
+<p>Flat ₹49 below that — no hidden costs at checkout.</p>
+</div>
+</div>
+
+<div class="benefit">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>
+<div>
+<h3>Cash on Delivery</h3>
+<p>Pay when your order arrives at your doorstep.</p>
+</div>
+</div>
+
+<div class="benefit">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+<div>
+<h3>Buyer protection</h3>
+<p>Cancel pending orders anytime; support is a click away.</p>
+</div>
+</div>
+
+</div>
+</section>
+
+
+<!-- DYNAMIC ARTISAN GALLERY -->
+<section class="gallery-section">
+  <p class="section-eyebrow">Artisan Showcase</p>
+  <div class="carousel-header">
+    <h2>Curated Gallery</h2>
+    <a href="collection.html" class="view-all-link">View full collection →</a>
+  </div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+
+<!-- CATEGORIES -->
+<section id="categories" class="categories">
+
+<p class="section-eyebrow">Browse the collection</p>
+
+<div class="carousel-header">
+<h2>Shop by Category</h2>
+<div class="carousel-arrows">
+<button class="carousel-arrow" onclick="scrollCarousel('categoryGrid', -1)" aria-label="Scroll left">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="carousel-arrow" onclick="scrollCarousel('categoryGrid', 1)" aria-label="Scroll right">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+</div>
+</div>
+
+<div class="category-grid carousel-track" id="categoryGrid">
+
+<div class="category-card" onclick="openCategory('spiritual')">
+<img src="Images/Spiritual Art/krishna-1.jpeg" data-category="spiritual" alt="Hand-painted spiritual art" loading="lazy">
+<h3>Spiritual</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('clock')">
+<img src="Images/Clock/Clock.jpeg" data-category="clock" alt="Handcrafted decorative wall clock" loading="lazy">
+<h3>Clock</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('lippan')">
+<img src="Images/Lippan Art/best1.jpeg" data-category="lippan" alt="Traditional Lippan mirror art" loading="lazy">
+<h3>Lippan Art</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('diya')">
+<img src="Images/Diya Art/1.jpeg" data-category="diya" alt="Hand-decorated diya art" loading="lazy">
+<h3>Diya Art</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('zharokha')">
+<img src="Images/Zharokha Art/1.jpeg" data-category="zharokha" alt="Zharokha mirror-work frame" loading="lazy">
+<h3>Zharokha Art</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('toran')">
+<img src="Images/Toran/toran-1.png" data-category="toran" alt="Handcrafted door toran" loading="lazy">
+<h3>Toran</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('pipe-cleaner')">
+<img src="Images/Pipe Cleaner/pipe-cleaner-2.png" data-category="pipe-cleaner" alt="Pipe cleaner craft art" loading="lazy">
+<h3>Pipe Cleaner Art</h3>
+</div>
+
+<div class="category-card" onclick="openCategory('puja-thali')">
+<img src="Images/Puja Thali/puja-thali-1.png" data-category="puja-thali" alt="Decorated puja thali" loading="lazy">
+<h3>Puja Thali</h3>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- FEATURED PRODUCTS -->
+<section class="products">
+
+<div class="carousel-header">
+<h2>Featured Products</h2>
+<div class="carousel-arrows">
+<button class="carousel-arrow" onclick="scrollCarousel('productContainer', -1)" aria-label="Scroll left">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="carousel-arrow" onclick="scrollCarousel('productContainer', 1)" aria-label="Scroll right">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+</div>
+</div>
+
+<div class="product-grid carousel-track" id="productContainer"></div>
+
+</section>
+
+
+<!-- NEW COMERS -->
+<section class="products">
+
+<div class="carousel-header">
+<h2>New Comers</h2>
+<div class="carousel-arrows">
+<button class="carousel-arrow" onclick="scrollCarousel('newProducts', -1)" aria-label="Scroll left">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+</button>
+<button class="carousel-arrow" onclick="scrollCarousel('newProducts', 1)" aria-label="Scroll right">
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+</div>
+</div>
+
+<div class="product-grid carousel-track" id="newProducts"></div>
+
+</section>
+
+
+<!-- RECENTLY VIEWED (populated only when the visitor has history) -->
+<section class="products" id="recentlyViewedSection" style="display:none">
+<p class="section-eyebrow">Pick up where you left off</p>
+<h2>Recently Viewed</h2>
+<div class="product-grid carousel-track" id="recentlyViewedGrid"></div>
+</section>
+
+
+<!-- SELLER SPOTLIGHT -->
+<section class="seller" id="sellerSpotlight" style="display:none">
+
+<p class="section-eyebrow">Meet the maker</p>
+<h2>Top Seller of the Week</h2>
+
+<div class="seller-card">
+
+<img id="spotlightAvatar" src="Images/placeholder.svg" alt="Featured artisan" loading="lazy">
+
+<div>
+
+<h3 id="spotlightName"></h3>
+
+<p id="spotlightLocation"></p>
+
+<p id="spotlightDescription"></p>
+
+<div class="rating" id="spotlightRating"></div>
+
+<p id="spotlightPhone"></p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+
+<p class="section-eyebrow">What buyers say</p>
+<h2>Loved by handmade shoppers</h2>
+
+<div class="testimonial-grid">
+
+<div class="testimonial-card">
+<div class="rating">★★★★★</div>
+<p>"The Lippan art mirror piece I ordered looks even better in person. You can tell it's actually hand-painted, not mass-produced — worth every rupee."</p>
+<p class="testimonial-author">— Priya S., Ahmedabad</p>
+</div>
+
+<div class="testimonial-card">
+<div class="rating">★★★★★</div>
+<p>"Ordered a mandala wall clock for my new home. Packaging was careful, arrived without a scratch, and Cash on Delivery made it an easy first order."</p>
+<p class="testimonial-author">— Rohan M., Pune</p>
+</div>
+
+<div class="testimonial-card">
+<div class="rating">★★★★★</div>
+<p>"Bought diyas for Diwali gifting — every single one was a little different, which is exactly what made them feel special. Will be back for the zharokha frames next."</p>
+<p class="testimonial-author">— Ananya K., Bengaluru</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- BECOME A SELLER CTA -->
+<section class="seller-cta">
+<div class="seller-cta-inner">
+<div>
+<p class="section-eyebrow">For artisans</p>
+<h2>Turn your craft into a shop</h2>
+<p>List your handmade work — lippan, clocks, diyas, torans, and more — and reach buyers looking for the real thing. No listing fees, you set your own prices.</p>
+</div>
+<a href="sell.html" class="btn">Become a Seller →</a>
+</div>
+</section>
+
+
+<!-- FAQ -->
+<section class="faq-section">
+
+<p class="section-eyebrow">Good to know</p>
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-list">
+
+<details class="faq-item">
+<summary>How much is shipping?</summary>
+<p>Flat ₹49 per order, or free on orders over ₹999.</p>
+</details>
+
+<details class="faq-item">
+<summary>Do you offer Cash on Delivery?</summary>
+<p>Yes — pay when your order arrives at your doorstep, no online payment required.</p>
+</details>
+
+<details class="faq-item">
+<summary>Can I cancel an order after placing it?</summary>
+<p>Yes, as long as it's still marked "pending" in <a href="profile.html">My Orders</a>. Once a seller confirms or ships it, <a href="contact.html">contact us</a> and we'll do what we can.</p>
+</details>
+
+<details class="faq-item">
+<summary>What if an item arrives damaged?</summary>
+<p>Since most items are handmade in limited quantities, please check photos and descriptions carefully before ordering. If something arrives damaged or not as described, contact us within 48 hours with photos and we'll work it out with the seller directly.</p>
+</details>
+
+</div>
+
+</section>
+
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+
+<h2>Get Weekly Handmade Picks</h2>
+
+<p>Subscribe for exclusive deals</p>
+
+<form id="newsletterForm" onsubmit="return subscribeNewsletter(event)">
+  <input type="email" id="newsletterEmail" placeholder="Enter your email" required>
+  <button type="submit">Subscribe</button>
+</form>
+<p id="newsletterMsg" style="display:none;font-size:13px;margin-top:10px"></p>
+
+</section>
+
+
+<div class="floating-cart" onclick="location.href='cart.html'">
+
+<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
+<span id="cartCount">0</span>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+
+<div class="footer-grid">
+
+<div class="footer-brand">
+<h4>CraftNext</h4>
+<p>A marketplace for genuinely handmade Indian art — lippan, mandala clocks, diyas, zharokhas, torans, pipe-cleaner art and puja thalis, straight from the maker's hands to your home.</p>
+</div>
+
+<div>
+<h4>About</h4>
+<a href="about.html">Our Story</a>
+<a href="contact.html">Contact</a>
+</div>
+
+<div>
+<h4>Help</h4>
+<a href="contact.html">Support</a>
+<a href="shipping-returns.html">Shipping</a>
+<a href="shipping-returns.html">Returns</a>
+</div>
+
+<div>
+<h4>Sell</h4>
+<a href="sell.html">Start Selling</a>
+<a href="sell.html">Seller Guide</a>
+</div>
+
+</div>
+
+<p class="copyright">
+© 2026 CraftNext. All rights reserved. · <a href="privacy.html" style="color:inherit">Privacy Policy</a> · <a href="terms.html" style="color:inherit">Terms of Service</a>
+</p>
+
+</footer>
+
+
+<!-- CATEGORY NAVIGATION -->
+<script>
+
+function openCategory(cat){
+window.location.href = "collection.html?cat=" + cat;
+}
+
+</script>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+
+
+<!-- LOGIN / LOGOUT CONTROL -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const user = getUser();
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const adminPanelBtn = document.getElementById("adminPanelBtn");
+
+  if (user) {
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline";
+    logoutBtn.textContent = "Logout (" + user.name.split(" ")[0] + ")";
+    if (user.role === "admin") adminPanelBtn.style.display = "inline";
+  }
+
+  logoutBtn.addEventListener("click", function(){
+    clearAuth();
+    showToast("Logged out successfully", "info");
+    setTimeout(() => window.location.reload(), 800);
+  });
+
+  // Handle redirect after login
+  const redir = sessionStorage.getItem("redirect_after_login");
+  if (redir) {
+    sessionStorage.removeItem("redirect_after_login");
+    window.location.href = redir;
+  }
+});
+</script>
+
+
+<!-- PRODUCTS (Featured + New Comers + Search) — all from the API -->
+<script>
+
+const featuredGrid = document.getElementById("productContainer");
+const newGrid = document.getElementById("newProducts");
+const featuredHeading = document.querySelector(".products h2");
+
+let ALL_PRODUCTS = [];
+
+/* renderSkeletons moved to script.js so all pages share it */
+
+function renderInto(container, list, emptyMsg) {
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>${emptyMsg}</p></div>`;
+    return;
+  }
+  container.innerHTML = "";
+  list.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.dataset.tooltipName = p.name;
+    card.dataset.tooltipSeller = p.sellerName || (p.seller && (p.seller.shopName || p.seller.name)) || "Artisan";
+    card.dataset.tooltipCategory = (p.category || "").charAt(0).toUpperCase() + (p.category || "").slice(1);
+    card.dataset.tooltipPrice = "₹" + Number(p.price).toLocaleString("en-IN");
+    card.innerHTML = productCardHTML(p);
+    container.appendChild(card);
+  });
+  renderWishlistIcons();
+}
+
+function featuredList() {
+  const best = ALL_PRODUCTS.filter(p => p.bestSeller);
+  return best.length ? best : ALL_PRODUCTS.slice(0, 8);
+}
+
+async function loadProducts() {
+  renderSkeletons(featuredGrid, 5);
+  renderSkeletons(newGrid, 4);
+  try {
+    ALL_PRODUCTS = await Products.getAll();
+    cacheProducts(ALL_PRODUCTS);
+
+    renderInto(featuredGrid, featuredList(), "No products found.");
+
+    const newcomers = ALL_PRODUCTS.filter(p => p.newArrival);
+    renderInto(newGrid, newcomers.length ? newcomers : ALL_PRODUCTS.slice(0, 4), "No new products yet.");
+    renderRecentlyViewed();
+  } catch (err) {
+    const msg = `<div class="empty-state" style="grid-column:1/-1"><p>Could not load products. Make sure the backend is running.</p></div>`;
+    featuredGrid.innerHTML = msg;
+    newGrid.innerHTML = msg;
+  }
+}
+
+function renderRecentlyViewed() {
+  const ids = getRecentlyViewed();
+  if (!ids.length) return;
+  const byId = Object.fromEntries(ALL_PRODUCTS.map(p => [String(p._id), p]));
+  const items = ids.map(id => byId[id]).filter(Boolean);
+  if (!items.length) return;
+  renderInto(document.getElementById("recentlyViewedGrid"), items, "");
+  document.getElementById("recentlyViewedSection").style.display = "";
+}
+
+async function doSearch() {
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  if (!q) {
+    featuredHeading.textContent = "Featured Products";
+    renderInto(featuredGrid, featuredList(), "No products found.");
+    return;
+  }
+  let results = ALL_PRODUCTS.filter(p =>
+    (p.name || "").toLowerCase().includes(q) ||
+    (p.sellerName || "").toLowerCase().includes(q) ||
+    (p.category || "").toLowerCase().includes(q)
+  );
+  // Cache miss → ask the server (Mongo text index searches the full
+  // catalog, not just what this page has loaded).
+  if (!results.length) {
+    try {
+      results = await Products.getAll({ search: q });
+      cacheProducts(results);
+    } catch { /* offline/backend down — keep empty result state */ }
+  }
+  featuredHeading.textContent = `Results for "${q}"`;
+  renderInto(featuredGrid, results, "No products match your search.");
+  featuredHeading.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.getElementById("searchInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") doSearch();
+});
+
+function scrollCarousel(containerId, direction) {
+  const el = document.getElementById(containerId);
+  el.scrollBy({ left: direction * (el.clientWidth * 0.8), behavior: "smooth" });
+}
+
+loadProducts().then(() => initializeGallery());
+
+async function loadTopSeller() {
+  try {
+    const seller = await Products.topSeller();
+    if (!seller) return;
+    document.getElementById("spotlightName").textContent = seller.name;
+    document.getElementById("spotlightLocation").textContent = seller.location;
+    document.getElementById("spotlightDescription").textContent = seller.description ||
+      `Specialized in handmade goods with ${seller.productCount} product${seller.productCount === 1 ? "" : "s"} listed.`;
+    document.getElementById("spotlightRating").textContent = `${starString(seller.rating)} ${seller.rating.toFixed(1)}/5.0`;
+    document.getElementById("spotlightPhone").textContent = seller.phone ? `Mo. No. ${seller.phone}` : "";
+    document.getElementById("spotlightAvatar").src = seller.avatar ? imgUrl(seller.avatar) : "Images/placeholder.svg";
+    document.getElementById("sellerSpotlight").style.display = "";
+  } catch (err) {
+    // Spotlight is decorative — fail silently, section just stays hidden.
+  }
+}
+
+loadTopSeller();
+
+async function loadCategoryImages() {
+  try {
+    const map = await Products.categoryImages();
+    Object.keys(map).forEach((cat) => {
+      const img = document.querySelector(`.category-card img[data-category="${cat}"]`);
+      if (img && map[cat]) img.src = imgUrl(map[cat]);
+    });
+  } catch (err) {
+    // Falls back to the default category art — not worth surfacing to the user.
+  }
+}
+
+loadCategoryImages();
+
+/* ——— ODOMETER REEL GALLERY ———
+   Each column is a vertical strip of images that scrolls upward on an
+   endless CSS loop, like a mechanical clock's digit wheels ticking. */
+async function initializeGallery() {
+  const container = document.getElementById("galleryGrid");
+  if (!container) return;
+
+  try {
+    const res = await fetch(API_BASE + "/products?inGallery=true");
+    let galleryProducts = await res.json();
+
+    if (!galleryProducts.length) {
+      galleryProducts = ALL_PRODUCTS.slice(0, 8);
+    }
+
+    if (!galleryProducts.length) {
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>No items in the gallery yet.</p></div>`;
+      return;
+    }
+
+    // Dedup and pool as many products as we can for the reels.
+    const pool = [];
+    const seen = new Set();
+    [...galleryProducts, ...ALL_PRODUCTS].forEach(p => {
+      if (!seen.has(p._id)) { seen.add(p._id); pool.push(p); }
+    });
+
+    const COLUMNS = 4;
+    const MIN_PER_COLUMN = 4; // enough height for a smooth, non-repetitive loop
+
+    // Deal the pool round-robin into columns, cycling back through it if
+    // the catalog is smaller than COLUMNS * MIN_PER_COLUMN.
+    const columns = Array.from({ length: COLUMNS }, () => []);
+    let dealt = 0;
+    const target = COLUMNS * Math.max(MIN_PER_COLUMN, Math.ceil(pool.length / COLUMNS));
+    while (dealt < target) {
+      const p = pool[dealt % pool.length];
+      columns[dealt % COLUMNS].push(p);
+      dealt++;
+    }
+
+    container.innerHTML = columns.map((items, colIdx) => {
+      // Duplicate the column's items so the keyframe can loop seamlessly
+      // by traveling exactly one copy's worth of height (-50%).
+      const cellsHtml = [...items, ...items].map(p => `
+        <div class="gallery-reel-cell" onclick="location.href='product.html?id=${p._id}'">
+          <div class="gallery-reel-cell-bg" style="--cell-bg:url('${imgUrl(p.img)}')"></div>
+          <img src="${imgUrl(p.img)}" alt="${p.name}" loading="lazy">
+        </div>
+      `).join("");
+
+      // Stagger duration and start offset per column so the reels don't
+      // all tick in lockstep — reads as continuous, organic motion.
+      // Seconds-per-cell (7.1) is tuned to the 340px cell height for the
+      // same ~48px/s scroll speed the gallery had at the old 240px size.
+      const duration = (items.length * 7.1 + colIdx * 2.8).toFixed(1);
+      const delay = (-(colIdx * items.length * 1.8)).toFixed(1);
+
+      return `
+        <div class="gallery-item" data-index="${colIdx}">
+          <div class="gallery-reel" style="animation-duration:${duration}s; animation-delay:${delay}s;">
+            ${cellsHtml}
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><p>Could not load showcase gallery.</p></div>`;
+  }
+}
+
+
+</script>
+
+
+<!-- NEWSLETTER -->
+<script>
+
+async function subscribeNewsletter(e) {
+  e.preventDefault();
+  const email = document.getElementById("newsletterEmail").value.trim();
+  const msgEl = document.getElementById("newsletterMsg");
+  const btn = e.target.querySelector("button");
+
+  btn.disabled = true;
+  try {
+    const res = await Newsletter.subscribe(email);
+    msgEl.textContent = res.message;
+    msgEl.style.color = "var(--ok)";
+    msgEl.style.display = "block";
+    document.getElementById("newsletterEmail").value = "";
+  } catch (err) {
+    msgEl.textContent = err.message || "Could not subscribe. Please try again.";
+    msgEl.style.color = "var(--danger)";
+    msgEl.style.display = "block";
+  } finally {
+    btn.disabled = false;
+  }
+  return false;
+}
+
+</script>
+
+<!-- Cursor-following tooltip — at the very bottom, outside all containers -->
+<div id="global-cursor-tooltip"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tooltip = document.getElementById('global-cursor-tooltip');
+  if (!tooltip) return;
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let isHovering = false;
+  let currentCard = null;
+
+  // requestAnimationFrame loop for butter-smooth movement
+  const moveTooltip = () => {
+    if (isHovering) {
+      tooltip.style.transform = `translate(${mouseX + 15}px, ${mouseY + 15}px)`;
+      requestAnimationFrame(moveTooltip);
+    }
+  };
+
+  // mouseover BUBBLES (unlike mouseenter), so delegation works
+  document.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.product-card[data-tooltip-name]');
+    if (!card || card === currentCard) return;
+
+    currentCard = card;
+    isHovering = true;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    const title = card.getAttribute('data-tooltip-name') || 'Product';
+    const price = card.getAttribute('data-tooltip-price') || '';
+
+    tooltip.innerHTML = `
+      <strong>${title}</strong>
+      <span>${price}</span>
+    `;
+
+    tooltip.classList.add('is-active');
+    requestAnimationFrame(moveTooltip);
+  });
+
+  // mouseout BUBBLES (unlike mouseleave)
+  document.addEventListener('mouseout', (e) => {
+    if (!currentCard) return;
+    const related = e.relatedTarget;
+    // Only hide if we truly left the card (not just moving between children)
+    if (related && currentCard.contains(related)) return;
+    if (!currentCard.contains(e.target)) return;
+
+    isHovering = false;
+    currentCard = null;
+    tooltip.classList.remove('is-active');
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+});
+</script>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var body = document.body;
+  var active = false;
+
+  window.addEventListener('mousemove', function (e) {
+    root.style.setProperty('--mx', e.clientX + 'px');
+    root.style.setProperty('--my', e.clientY + 'px');
+    if (!active) {
+      active = true;
+      body.classList.add('bg-reveal-active');
+    }
+  });
+
+  window.addEventListener('mouseleave', function () {
+    active = false;
+    body.classList.remove('bg-reveal-active');
+  });
+})();
+</script>
+
+</body>
+</html>

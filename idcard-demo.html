@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo University — Hostel &amp; Mess Card (Sample)</title>
+<style>
+  :root{
+    --navy:#1b2a4a;
+    --navy-dark:#101a30;
+    --red:#c0392b;
+    --gold:#e0a526;
+    --bg:#eef0f3;
+    --card-bg:#ffffff;
+    --text-dim:#8b95a5;
+    --text-main:#2b2f36;
+    --green:#1e9e6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:var(--bg);
+    display:flex;
+    justify-content:center;
+    padding:24px 12px 60px;
+  }
+  .phone{
+    width:100%;
+    max-width:420px;
+    background:var(--card-bg);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+  }
+  .topbar{
+    background:#1c1c1c;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    font-size:14px;
+  }
+  .topbar .title{
+    text-align:center;
+    line-height:1.2;
+  }
+  .topbar .title small{
+    display:block;
+    color:#bbb;
+    font-size:11px;
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 20px 6px;
+  }
+  .brand-row .logo{
+    width:54px;height:54px;border-radius:50%;
+    background:conic-gradient(from 0deg,var(--gold),var(--red),var(--navy),var(--gold));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:11px;text-align:center;
+  }
+  .brand-row .brand-name{
+    font-size:24px;font-weight:700;color:var(--text-main);
+  }
+  .brand-row .brand-name span{color:var(--red);display:block;font-size:20px;}
+  .avatar-float{
+    display:flex;justify-content:flex-end;padding:0 20px;
+  }
+  .avatar-float img{
+    width:56px;height:56px;border-radius:50%;object-fit:cover;
+    border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  .section-title{
+    padding:14px 20px;
+    background:#eef1f4;
+    color:#7a8494;
+    font-size:20px;
+    font-weight:400;
+  }
+  .section-title strong{color:#aeb6c2;font-weight:400;}
+  .card-wrap{
+    background:#e3e6ea;
+    padding:20px;
+  }
+  .id-card{
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 6px 16px rgba(0,0,0,.1);
+  }
+  .id-card .header{
+    background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+    color:#fff;
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:.5px;
+  }
+  .id-card .header .icon{font-size:22px;}
+  .id-card .body{
+    padding:24px 20px 10px;
+    text-align:center;
+  }
+  .id-card .photo{
+    width:150px;height:180px;
+    object-fit:cover;
+    border-radius:6px;
+    border:1px dashed #cfd4da;
+    margin:0 auto 16px;
+    display:block;
+  }
+  .id-card .name{
+    font-size:19px;
+    font-weight:700;
+    color:var(--text-main);
+    text-transform:uppercase;
+    margin-bottom:14px;
+    line-height:1.3;
+  }
+  .id-card dl{
+    text-align:left;
+    padding:0 4px 8px;
+  }
+  .id-card .row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:8px 0;
+    border-bottom:1px solid #f1f2f4;
+    font-size:14.5px;
+  }
+  .id-card .row:last-child{border-bottom:none;}
+  .id-card .row .ico{
+    width:20px;text-align:center;color:var(--navy);
+  }
+  .id-card .row .label{
+    color:#8b95a5;
+    width:100px;
+    flex-shrink:0;
+  }
+  .id-card .row .value{
+    color:var(--text-main);
+    font-weight:600;
+  }
+  .id-card .row .value.validity{
+    color:var(--red);
+    font-weight:700;
+  }
+  .divider{
+    text-align:center;
+    color:#c7ccd3;
+    letter-spacing:2px;
+    font-size:12px;
+    padding:6px 0 2px;
+  }
+  .timestamp{
+    text-align:center;
+    padding:4px 0 22px;
+  }
+  .timestamp .date{
+    color:#9aa2ad;
+    font-size:14px;
+    margin-bottom:6px;
+  }
+  .timestamp .time{
+    color:var(--green);
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:1px;
+  }
+  .footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 20px;
+    background:#3a3f47;
+    color:#c6cad0;
+    font-size:13px;
+  }
+  .footer .up-arrow{
+    width:30px;height:30px;border:1px solid #5a6068;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .fictional-note{
+    text-align:center;
+    font-size:11px;
+    color:#a0a6ae;
+    padding:10px 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="topbar">
+    <span>✕</span>
+    <div class="title">Demo University<small>example.edu (sample data)</small></div>
+    <span>⋮</span>
+  </div>
+
+  <div class="brand-row">
+    <div class="logo">DEMO<br>UNIV</div>
+    <div class="brand-name">Demo<span>University</span></div>
+  </div>
+
+  <div class="avatar-float">
+    <img src="Images/placeholder.svg" alt="avatar">
+  </div>
+
+  <div class="section-title">Hostel &amp; Aarogya Card <strong>STUDENT NAME</strong></div>
+
+  <div class="card-wrap">
+    <div class="id-card">
+      <div class="header"><span class="icon">🍴</span> SAMPLE MESS</div>
+      <div class="body">
+        <img class="photo" src="Images/placeholder.svg" alt="student photo placeholder">
+        <div class="name">Student Name</div>
+        <dl>
+          <div class="row"><span class="ico">≣</span><span class="label">Enrollment No.</span><span class="value" id="enroll">0000000000000</span></div>
+          <div class="row"><span class="ico">🏢</span><span class="label">Hostel</span><span class="value">Sample Bhawan - A</span></div>
+          <div class="row"><span class="ico">📞</span><span class="label">Contact No.</span><span class="value" id="contact">0000000000</span></div>
+          <div class="row"><span class="ico">🎓</span><span class="label">Institute</span><span class="value">DEMO-1</span></div>
+          <div class="row"><span class="ico">📅</span><span class="label">Validity</span><span class="value validity">01-07-2026 to 30-06-2027</span></div>
+        </dl>
+      </div>
+      <div class="divider">--------------------------------</div>
+      <div class="timestamp">
+        <div class="date" id="live-date">--</div>
+        <div class="time" id="live-time">--:--:--</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fictional-note">Sample layout for coursework — all data above is fictional placeholder data, not a real institutional record.</div>
+
+  <div class="footer">
+    <span>2026 © Demo University</span>
+    <span class="up-arrow">↑</span>
+  </div>
+</div>
+
+<script>
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function updateClock(){
+    const now = new Date();
+    const day = pad(now.getDate());
+    const month = pad(now.getMonth()+1);
+    const year = now.getFullYear();
+    document.getElementById('live-date').textContent = `${day}-${month}-${year}`;
+
+    let hours = now.getHours();
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    document.getElementById('live-time').textContent = `${pad(hours)}:${minutes}:${seconds} ${ampm}`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>

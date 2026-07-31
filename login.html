@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Log in or create your CraftNext account as a buyer or seller.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Login – CraftNext">
+<meta property="og:description" content="Log in or create your CraftNext account as a buyer or seller.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Login – CraftNext</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="style.css?v=5">
+
+<style>
+.auth-page {
+  min-height: calc(100vh - 65px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 440px;
+  overflow: hidden;
+  animation: authCardIn .5s cubic-bezier(.16,1,.3,1);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-header {
+  padding: 30px 32px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.auth-header h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.auth-header p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.role-tabs {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  margin-top: 18px;
+  gap: 3px;
+}
+
+.role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.16,1,.3,1);
+}
+
+.role-tab.active {
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.02);
+}
+
+.auth-body {
+  padding: 28px 32px 32px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  animation: fadeInUp .4s cubic-bezier(.16,1,.3,1) backwards;
+}
+
+.form-group:nth-child(1) { animation-delay: .1s; }
+.form-group:nth-child(2) { animation-delay: .15s; }
+.form-group:nth-child(3) { animation-delay: .2s; }
+.form-group:nth-child(4) { animation-delay: .25s; }
+.form-group:nth-child(5) { animation-delay: .3s; }
+.form-group:nth-child(6) { animation-delay: .35s; }
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+
+.form-group input::placeholder {
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.seller-fields { display: none; }
+.seller-fields.show { display: block; }
+
+.auth-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-weight: 600;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-btn:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(179,73,31,.25); }
+.auth-btn:active { transform: scale(.98); }
+
+.auth-toggle {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.auth-toggle a {
+  color: var(--accent-ink);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.auth-toggle a:hover { text-decoration: underline; }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.msg {
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.msg.error {
+  background: var(--danger-soft);
+  color: var(--danger);
+  animation: fadeInUp .3s ease-out, shake .4s ease-in-out;
+}
+
+.msg.success {
+  background: var(--ok-soft);
+  color: var(--ok);
+  animation: fadeInUp .3s ease-out;
+}
+
+.auth-btn .spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.forgot-link {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+.forgot-link a {
+  font-size: 13px;
+  color: var(--accent-ink);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.forgot-link a:hover {
+  text-decoration: underline;
+}
+
+.otp-helper {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: none;
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: var(--accent-ink);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  font: inherit;
+}
+
+.resend-btn:hover { text-decoration: underline; }
+.resend-btn:disabled { color: var(--muted); cursor: default; text-decoration: none; }
+</style>
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<header>
+  <nav class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+    </div>
+  </nav>
+</header>
+
+
+<div class="auth-page">
+<div class="auth-card">
+
+  <div class="auth-header">
+    <h2 id="authTitle">Welcome Back</h2>
+    <p id="authSubtitle">Sign in to your CraftNext account</p>
+
+    <div class="role-tabs" id="roleTabs">
+      <button class="role-tab active" onclick="setRole('buyer')">Buyer</button>
+      <button class="role-tab" onclick="setRole('seller')">Seller</button>
+      <button class="role-tab" onclick="setRole('admin')">Admin</button>
+    </div>
+  </div>
+
+  <div class="auth-body">
+
+    <div class="msg error" id="errorMsg"></div>
+    <div class="msg success" id="successMsg"></div>
+
+    <form id="authForm" onsubmit="handleSubmit(event)">
+
+      <div class="form-group" id="nameGroup" style="display:none">
+        <label>Full Name</label>
+        <input type="text" id="nameInput" placeholder="Your full name">
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="emailInput" placeholder="you@example.com" required>
+      </div>
+
+      <div class="form-group" id="passwordGroup">
+        <label>Password</label>
+        <input type="password" id="passwordInput" placeholder="Minimum 6 characters" required>
+      </div>
+
+      <div class="form-group" id="otpGroup" style="display:none">
+        <label>Enter OTP</label>
+        <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6">
+        <div class="otp-helper" id="otpHelper">
+          Didn't get it?
+          <button type="button" class="resend-btn" id="resendBtn" onclick="resendOTP()">Resend OTP</button>
+        </div>
+      </div>
+
+      <div class="forgot-link" id="forgotLink">
+        <a onclick="enterForgotMode()">Forgot password?</a>
+      </div>
+
+      <div class="forgot-link" id="backToLoginLink" style="display:none">
+        <a onclick="backToLogin()">← Back to login</a>
+      </div>
+
+      <div class="seller-fields" id="sellerFields">
+        <div class="form-group">
+          <label>Shop Name</label>
+          <input type="text" id="shopNameInput" placeholder="Your artisan shop name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="locationInput" placeholder="City, State">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="phoneInput" placeholder="+91 XXXXX XXXXX">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Shop Description</label>
+          <input type="text" id="shopDescInput" placeholder="Brief description of your work">
+        </div>
+      </div>
+
+      <button type="submit" class="auth-btn" id="submitBtn">Sign In</button>
+
+    </form>
+
+    <div class="divider" id="toggleDivider">or</div>
+
+    <div class="auth-toggle" id="authToggle">
+      Don't have an account? <a onclick="toggleMode()">Create one</a>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script>
+
+let mode = "login";
+let role = "buyer";
+let pendingEmail = "";
+let pendingResetToken = "";
+
+// Wipes every field on the form — called on any role switch or mode switch
+// so no leftover data (someone else's email/password, a half-typed shop
+// name) ever carries over to what the user is about to do next.
+function clearFormFields() {
+  ["nameInput", "emailInput", "passwordInput", "shopNameInput", "locationInput", "phoneInput", "shopDescInput"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+}
+
+function setRole(r) {
+  role = r;
+  document.querySelectorAll(".role-tab").forEach((t, i) => {
+    t.classList.toggle("active", ["buyer","seller","admin"][i] === r);
+  });
+
+  clearFormFields();
+
+  const sellerFields = document.getElementById("sellerFields");
+  sellerFields.classList.toggle("show", r === "seller" && mode === "register");
+
+  const subtitle = document.getElementById("authSubtitle");
+  if (r === "admin") {
+    subtitle.textContent = "Admin portal — restricted access";
+    document.getElementById("toggleDivider").style.display = "none";
+    document.getElementById("authToggle").style.display = "none";
+  } else {
+    subtitle.textContent = mode === "login"
+      ? "Sign in to your CraftNext account"
+      : "Join the CraftNext community";
+    document.getElementById("toggleDivider").style.display = "flex";
+    document.getElementById("authToggle").style.display = "block";
+  }
+}
+
+function toggleMode() {
+  mode = mode === "login" ? "register" : "login";
+  const isRegister = mode === "register";
+
+  document.getElementById("authTitle").textContent = isRegister ? "Create Account" : "Welcome Back";
+  document.getElementById("authSubtitle").textContent = isRegister
+    ? "Join the CraftNext community"
+    : "Sign in to your CraftNext account";
+
+  document.getElementById("nameGroup").style.display = isRegister ? "block" : "none";
+  document.getElementById("forgotLink").style.display = isRegister ? "none" : "block";
+  document.getElementById("submitBtn").textContent = isRegister ? "Create Account" : "Sign In";
+
+  document.getElementById("authToggle").innerHTML = isRegister
+    ? `Already have an account? <a onclick="toggleMode()">Sign in</a>`
+    : `Don't have an account? <a onclick="toggleMode()">Create one</a>`;
+
+  document.getElementById("sellerFields").classList.toggle("show", role === "seller" && isRegister);
+
+  clearFormFields();
+  clearMessages();
+}
+
+function showError(msg) {
+  const el = document.getElementById("errorMsg");
+  el.textContent = msg;
+  el.style.display = "block";
+  document.getElementById("successMsg").style.display = "none";
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById("successMsg");
+  el.textContent = msg;
+  el.style.display = "block";
+  document.getElementById("errorMsg").style.display = "none";
+}
+
+function clearMessages() {
+  document.getElementById("errorMsg").style.display = "none";
+  document.getElementById("successMsg").style.display = "none";
+}
+
+function enterForgotMode() {
+  mode = "forgot";
+  document.getElementById("authTitle").textContent = "Reset Password";
+  document.getElementById("authSubtitle").textContent = "Enter your email and we'll send you a reset link";
+  document.getElementById("roleTabs").style.display = "none";
+  document.getElementById("nameGroup").style.display = "none";
+  document.getElementById("passwordGroup").style.display = "none";
+  document.getElementById("otpGroup").style.display = "none";
+  document.getElementById("sellerFields").classList.remove("show");
+  document.getElementById("forgotLink").style.display = "none";
+  document.getElementById("backToLoginLink").style.display = "block";
+  document.getElementById("toggleDivider").style.display = "none";
+  document.getElementById("authToggle").style.display = "none";
+  document.getElementById("submitBtn").textContent = "Send Reset Link";
+  clearMessages();
+}
+
+function enterResetMode(email, token) {
+  mode = "reset";
+  pendingEmail = email;
+  pendingResetToken = token;
+
+  document.getElementById("authTitle").textContent = "Set New Password";
+  document.getElementById("authSubtitle").textContent = "Choose a new password for your account";
+  document.getElementById("roleTabs").style.display = "none";
+  document.getElementById("nameGroup").style.display = "none";
+  document.getElementById("otpGroup").style.display = "none";
+  document.getElementById("sellerFields").classList.remove("show");
+  document.getElementById("forgotLink").style.display = "none";
+  document.getElementById("backToLoginLink").style.display = "block";
+  document.getElementById("toggleDivider").style.display = "none";
+  document.getElementById("authToggle").style.display = "none";
+
+  document.getElementById("emailInput").value = email;
+  document.getElementById("emailInput").closest(".form-group").style.display = "none";
+
+  document.getElementById("passwordGroup").style.display = "block";
+  document.getElementById("passwordInput").placeholder = "New password (min 6 characters)";
+  document.getElementById("submitBtn").textContent = "Reset Password";
+}
+
+function backToLogin() {
+  mode = "login";
+  pendingResetToken = "";
+  window.history.replaceState({}, "", "login.html");
+
+  document.getElementById("authTitle").textContent = "Welcome Back";
+  document.getElementById("authSubtitle").textContent = "Sign in to your CraftNext account";
+  document.getElementById("roleTabs").style.display = "flex";
+  document.getElementById("emailInput").closest(".form-group").style.display = "block";
+  document.getElementById("emailInput").value = "";
+  document.getElementById("passwordGroup").style.display = "block";
+  document.getElementById("passwordInput").placeholder = "Minimum 6 characters";
+  document.getElementById("forgotLink").style.display = "block";
+  document.getElementById("backToLoginLink").style.display = "none";
+  document.getElementById("toggleDivider").style.display = "flex";
+  document.getElementById("authToggle").style.display = "block";
+  document.getElementById("submitBtn").textContent = "Sign In";
+  clearMessages();
+}
+
+function enterOTPMode(email) {
+  pendingEmail = email;
+  localStorage.setItem("verify_email", email);
+  mode = "verify";
+  document.getElementById("otpGroup").style.display = "block";
+  document.getElementById("otpHelper").style.display = "block";
+  document.getElementById("passwordGroup").style.display = "none";
+  document.getElementById("submitBtn").textContent = "Verify OTP";
+}
+
+async function resendOTP() {
+  const btn = document.getElementById("resendBtn");
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  try {
+    await apiRequest("/auth/resend-otp", "POST", { email: pendingEmail });
+    showSuccess("New OTP sent to your email.");
+  } catch (err) {
+    showError(err.message || "Failed to resend OTP.");
+  }
+  // Cooldown 30s
+  let sec = 30;
+  const timer = setInterval(() => {
+    btn.textContent = `Resend in ${sec}s`;
+    sec--;
+    if (sec < 0) {
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.textContent = "Resend OTP";
+    }
+  }, 1000);
+}
+
+async function handleSubmit(e) {
+  e.preventDefault();
+  clearMessages();
+
+  if (mode === "forgot") {
+    const email = document.getElementById("emailInput").value.trim();
+    if (!email) { showError("Please enter your email."); return; }
+    const btn = document.getElementById("submitBtn");
+    btn.innerHTML = `<span class="spinner"></span> Sending...`;
+    btn.disabled = true;
+    try {
+      const res = await Auth.forgotPassword(email);
+      showSuccess(res.message || "If that email is registered, a reset link has been sent.");
+    } catch (err) {
+      showError(err.message || "Something went wrong.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Send Reset Link";
+    }
+    return;
+  }
+
+  if (mode === "reset") {
+    const newPassword = document.getElementById("passwordInput").value;
+    if (newPassword.length < 6) { showError("Password must be at least 6 characters."); return; }
+    const btn = document.getElementById("submitBtn");
+    btn.innerHTML = `<span class="spinner"></span> Resetting...`;
+    btn.disabled = true;
+    try {
+      await Auth.resetPassword(pendingEmail, pendingResetToken, newPassword);
+      showSuccess("Password reset! Redirecting to sign in...");
+      setTimeout(backToLogin, 1200);
+    } catch (err) {
+      showError(err.message || "Could not reset password.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Reset Password";
+    }
+    return;
+  }
+
+  if (mode === "verify") {
+    const otp = document.getElementById("otpInput").value.trim();
+    const email = localStorage.getItem("verify_email");
+    const password = document.getElementById("passwordInput").value;
+    const btn = document.getElementById("submitBtn");
+    btn.innerHTML = `<span class="spinner"></span> Verifying...`;
+    btn.disabled = true;
+    try {
+      await apiRequest("/auth/verify-otp", "POST", { email, otp });
+      localStorage.removeItem("verify_email");
+
+      const data = await Auth.login(email, password);
+      saveAuth(data);
+      showSuccess("Email verified! Redirecting...");
+
+      setTimeout(() => {
+        if (data.role === "admin") window.location.href = "admin.html";
+        else if (data.role === "seller") window.location.href = "seller-dashboard.html";
+        else window.location.href = "index.html";
+      }, 800);
+    } catch (err) {
+      showError(err.message || "Invalid or expired OTP.");
+      btn.disabled = false;
+      btn.textContent = "Verify OTP";
+    }
+    return;
+  }
+
+  const btn = document.getElementById("submitBtn");
+  btn.innerHTML = `<span class="spinner"></span> Please wait...`;
+  btn.disabled = true;
+
+  const email = document.getElementById("emailInput").value.trim();
+  const password = document.getElementById("passwordInput").value;
+
+  try {
+    if (mode === "login") {
+      const data = await Auth.login(email, password);
+
+      if (role === "admin" && data.role !== "admin") {
+        throw new Error("Access denied. Not an admin account.");
+      }
+      if (role === "seller" && data.role !== "seller" && data.role !== "admin") {
+        throw new Error("Not a seller account.");
+      }
+
+      saveAuth(data);
+      showSuccess("Login successful! Redirecting...");
+
+      setTimeout(() => {
+        const redir = sessionStorage.getItem("redirect_after_login");
+        if (redir) {
+          sessionStorage.removeItem("redirect_after_login");
+          window.location.href = redir;
+        } else if (data.role === "admin") window.location.href = "admin.html";
+        else if (data.role === "seller") window.location.href = "seller-dashboard.html";
+        else window.location.href = "index.html";
+      }, 800);
+
+    } else {
+      const name = document.getElementById("nameInput").value.trim();
+      if (!name) { showError("Please enter your name."); return; }
+      if (password.length < 6) { showError("Password must be at least 6 characters."); return; }
+
+      const payload = { name, email, password, role };
+
+      if (role === "seller") {
+        payload.shopName = document.getElementById("shopNameInput").value.trim();
+        payload.location = document.getElementById("locationInput").value.trim();
+        payload.phone = document.getElementById("phoneInput").value.trim();
+        payload.shopDescription = document.getElementById("shopDescInput").value.trim();
+      }
+
+      await Auth.register(payload);
+      showSuccess("OTP sent to your email. Please verify.");
+      enterOTPMode(email);
+    }
+
+  } catch (err) {
+    showError(err.message || "Something went wrong. Please try again.");
+  } finally {
+    btn.disabled = false;
+    if (mode === "login") btn.textContent = "Sign In";
+    else if (mode === "register") btn.textContent = "Create Account";
+    else btn.textContent = "Verify OTP";
+  }
+}
+
+/* If this page was opened from a reset-password email link, jump straight
+   into reset mode instead of the normal login form. */
+(function checkResetLink() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("resetToken");
+  const email = params.get("email");
+  if (token && email) {
+    enterResetMode(email, token);
+  } else if (params.get("sessionExpired")) {
+    showError("Your session expired. Please sign in again.");
+  }
+
+  const roleParam = params.get("role");
+  if (roleParam === "seller" || roleParam === "buyer" || roleParam === "admin") {
+    setRole(roleParam);
+  }
+})();
+
+</script>
+</body>
+</html>

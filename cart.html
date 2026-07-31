@@ -1,0 +1,379 @@
+<!-- this is cart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Review the handmade items in your CraftNext shopping cart.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Cart – CraftNext">
+<meta property="og:description" content="Review the handmade items in your CraftNext shopping cart.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Cart – CraftNext</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="style.css?v=5">
+
+<style>
+.cart-page { padding: 48px clamp(20px, 6vw, 60px); max-width: 1100px; margin: auto; }
+
+.cart-page h1 { font-size: 24px; margin-bottom: 26px; animation: fadeInUp .5s cubic-bezier(.16,1,.3,1); }
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* CART ITEMS */
+.cart-items-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 84px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  animation: fadeInUp .4s cubic-bezier(.16,1,.3,1) backwards;
+  transition: background .2s;
+}
+
+.cart-item:nth-child(1) { animation-delay: .05s; }
+.cart-item:nth-child(2) { animation-delay: .1s; }
+.cart-item:nth-child(3) { animation-delay: .15s; }
+.cart-item:nth-child(4) { animation-delay: .2s; }
+.cart-item:nth-child(5) { animation-delay: .25s; }
+
+.cart-item:last-child { border-bottom: none; }
+
+.cart-item-img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.cart-item-info h3 { font-size: 15.5px; margin-bottom: 4px; font-weight: 600; }
+
+.cart-item-seller { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+
+.cart-item-price { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+/* QTY BOX */
+.qty-control {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: fit-content;
+  margin-top: 8px;
+}
+
+.qty-control button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: var(--surface-2);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.qty-control button:hover { background: var(--line-strong); }
+
+.qty-control span {
+  min-width: 34px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.cart-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.item-total { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+.remove-btn {
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s;
+  padding: 4px;
+}
+
+.remove-btn:hover { color: var(--danger); }
+
+/* ORDER SUMMARY SIDEBAR */
+.cart-summary-box {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  position: sticky;
+  top: 90px;
+  animation: fadeInRight .5s cubic-bezier(.16,1,.3,1) .15s backwards;
+}
+
+.cart-summary-box h2 { font-size: 17px; margin-bottom: 18px; }
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.summary-divider { height: 1px; background: var(--line); margin: 14px 0; }
+
+.summary-total-line {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.summary-total-line span:last-child { color: var(--ink); }
+
+.checkout-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-weight: 600;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkout-btn:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(179,73,31,.25); }
+.checkout-btn:active { transform: scale(.98); }
+
+.continue-link {
+  display: block;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.continue-link:hover { color: var(--ink); }
+
+/* EMPTY CART */
+.empty-cart { text-align: center; padding: 72px 40px; color: var(--muted); }
+.empty-cart .empty-icon { display: flex; justify-content: center; margin-bottom: 16px; color: var(--line-strong); }
+.empty-cart .empty-icon svg { width: 56px; height: 56px; }
+.empty-cart h3 { font-size: 19px; color: var(--ink); margin-bottom: 8px; }
+.empty-cart p { margin-bottom: 22px; }
+.empty-cart a {
+  padding: 12px 26px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.empty-cart a:hover { background: var(--accent-dark); }
+
+.clear-cart-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.clear-cart-btn:hover { color: var(--danger); }
+
+@media (max-width: 850px) {
+  .cart-page { padding: 28px 20px; }
+  .cart-layout { grid-template-columns: 1fr; }
+  .cart-item { grid-template-columns: 64px 1fr; }
+  .cart-item-actions { flex-direction: row; align-items: center; grid-column: 1 / -1; }
+}
+</style>
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<header>
+  <nav class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+    <div class="nav-links">
+      <a href="index.html">← Continue Shopping</a>
+    </div>
+  </nav>
+</header>
+
+
+<div class="cart-page">
+  <h1>Shopping Cart</h1>
+
+  <div id="cartContent"></div>
+</div>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+<script>
+
+function renderCart() {
+  const cart = getCart();
+  const container = document.getElementById("cartContent");
+
+  if (!cart.length) {
+    container.innerHTML = `
+      <div class="empty-cart">
+        <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg></div>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="index.html">Start Shopping</a>
+      </div>
+    `;
+    return;
+  }
+
+  let subtotal = 0;
+  cart.forEach(i => subtotal += i.price * i.qty);
+  const shipping = subtotal > 999 ? 0 : 49;
+  const total = subtotal + shipping;
+
+  const itemsHTML = cart.map((item, idx) => `
+    <div class="cart-item">
+      <img class="cart-item-img"
+        src="${imgUrl(item.img)}"
+        alt="${esc(item.name)}"
+        onerror="this.onerror=null;this.src='Images/placeholder.svg'">
+
+      <div class="cart-item-info">
+        <h3>${esc(item.name)}</h3>
+        ${item.seller ? `<div class="cart-item-seller">By ${esc(item.seller)}</div>` : ""}
+        <div class="cart-item-price">₹${item.price.toLocaleString("en-IN")}</div>
+        <div class="qty-control">
+          <button onclick="changeQty(${idx}, -1)" aria-label="Decrease quantity">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty(${idx}, 1)" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <div class="cart-item-actions">
+        <div class="item-total">₹${(item.price * item.qty).toLocaleString("en-IN")}</div>
+        <button class="remove-btn" onclick="removeFromCart(${idx})" title="Remove" aria-label="Remove item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join("");
+
+  container.innerHTML = `
+    <div class="cart-layout">
+      <div class="cart-items-box">
+        ${itemsHTML}
+        <div style="margin-top:16px;text-align:right">
+          <button class="clear-cart-btn" onclick="clearCart()">Clear entire cart</button>
+        </div>
+      </div>
+
+      <div class="cart-summary-box">
+        <h2>Order Summary</h2>
+        <div class="summary-line">
+          <span>Subtotal (${cart.reduce((s,i) => s + i.qty, 0)} items)</span>
+          <span>₹${subtotal.toLocaleString("en-IN")}</span>
+        </div>
+        <div class="summary-line">
+          <span>Shipping</span>
+          <span>${shipping === 0 ? '<span style="color:var(--ok);font-weight:600">FREE</span>' : "₹" + shipping}</span>
+        </div>
+        ${shipping > 0 ? `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Free shipping on orders above ₹999</div>` : ""}
+        <div class="summary-divider"></div>
+        <div class="summary-total-line">
+          <span>Total</span>
+          <span>₹${total.toLocaleString("en-IN")}</span>
+        </div>
+        <button class="checkout-btn" onclick="window.location.href='checkout.html'">
+          Proceed to Checkout →
+        </button>
+        <a class="continue-link" href="index.html">← Continue Shopping</a>
+      </div>
+    </div>
+  `;
+}
+
+function changeQty(idx, delta) {
+  const cart = getCart();
+  cart[idx].qty += delta;
+  if (cart[idx].qty < 1) cart[idx].qty = 1;
+  saveCart(cart);
+  updateCartCount();
+  renderCart();
+}
+
+function removeFromCart(target) {
+  const cart = getCart();
+  let nextCart = cart;
+
+  if (Number.isInteger(target) || /^\d+$/.test(String(target))) {
+    const index = Number(target);
+    nextCart = cart.filter((_, idx) => idx !== index);
+  } else {
+    const targetId = String(target);
+    nextCart = cart.filter((item) => {
+      const ids = [item.id, item._id, item.productId].filter(Boolean).map(String);
+      return !ids.includes(targetId);
+    });
+  }
+
+  saveCart(nextCart);
+  updateCartCount();
+  renderCart();
+}
+
+function clearCart() {
+  if (confirm("Remove all items from cart?")) {
+    sessionStorage.removeItem("cart");
+    updateCartCount();
+    renderCart();
+  }
+}
+
+renderCart();
+</script>
+
+</body>
+</html>

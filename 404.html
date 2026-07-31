@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Page not found - CraftNext.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Page Not Found – CraftNext">
+<meta property="og:description" content="Page not found - CraftNext.">
+<meta name="robots" content="noindex">
+<title>Page Not Found – CraftNext</title>
+<link rel="stylesheet" href="style.css?v=5">
+<style>
+.nf-page {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+.nf-card {
+    text-align: center;
+    max-width: 480px;
+    padding: 56px 44px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    animation: fadeInUp .6s cubic-bezier(.16,1,.3,1);
+}
+.nf-code {
+    font-family: var(--font-serif);
+    font-size: clamp(72px, 14vw, 110px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+.nf-card h1 { font-size: 24px; margin-bottom: 10px; }
+.nf-card p { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+.nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.nf-actions .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+}
+.nf-actions .btn-secondary:hover { background: var(--surface-2); color: var(--ink); }
+</style>
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+    <div class="nav-links">
+        <a href="index.html">← Back to Home</a>
+    </div>
+</header>
+
+<section class="nf-page">
+    <div class="nf-card">
+        <div class="nf-code">404</div>
+        <h1>This page wandered off</h1>
+        <p>The page you're looking for doesn't exist or has been moved. Maybe one of our artisans borrowed it.</p>
+        <div class="nf-actions">
+            <a class="btn" href="index.html">Go Home</a>
+            <a class="btn btn-secondary" href="Collection.html">Browse Collection</a>
+        </div>
+    </div>
+</section>
+
+<script src="script.js?v=5"></script>
+
+</body>
+</html>

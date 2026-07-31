@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Image unavailable">
+  <rect width="400" height="400" fill="#f3ece4"/>
+  <circle cx="200" cy="170" r="48" fill="#e7d8c8"/>
+  <path d="M120 300 q80 -90 160 0" fill="none" stroke="#e7d8c8" stroke-width="40" stroke-linecap="round"/>
+  <text x="200" y="360" font-family="Georgia, serif" font-size="26" fill="#c9b8a8" text-anchor="middle">CraftNext</text>
+</svg>

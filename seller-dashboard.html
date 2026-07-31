@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Manage your products and orders as a CraftNext seller.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Seller Dashboard – CraftNext">
+<meta property="og:description" content="Manage your products and orders as a CraftNext seller.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Seller Dashboard – CraftNext</title>
+
+<link rel="stylesheet" href="style.css?v=5">
+
+<style>
+/* .dashboard/.topbar/.products-grid/.product-card/.product-img/.product-info/
+   .price/.category/.delete-btn all live in style.css — only the modal,
+   tabs, and orders table are page-specific. */
+
+.tabs { display: flex; gap: 6px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+
+.tab-btn {
+  padding: 10px 4px;
+  margin-right: 20px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+}
+
+.tab-btn:active { transform: scale(0.95); }
+
+.tab-btn.active, .tab-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+.tab-panel { display: none; }
+.tab-panel.active {
+  display: block;
+  animation: fadeInUp 0.4s cubic-bezier(.16,1,.3,1);
+}
+
+.product-card-actions { display: flex; gap: 8px; margin-top: 10px; }
+.product-card-actions button { flex: 1; margin-top: 0; }
+
+.edit-btn {
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.edit-btn:hover { background: var(--surface-2); }
+
+.data-table-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  overflow-x: auto;
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+
+th {
+  background: var(--bg);
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line);
+}
+
+td { padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+
+.status-badge {
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pending   { background: var(--warn-soft); color: var(--warn); }
+.status-confirmed { background: var(--ok-soft); color: var(--ok); }
+.status-shipped   { background: var(--info-soft); color: var(--info); }
+.status-delivered { background: var(--ok-soft); color: var(--ok); }
+.status-cancelled { background: var(--danger-soft); color: var(--danger); }
+
+.status-select {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  font: inherit;
+  cursor: pointer;
+  background: var(--surface);
+}
+
+.loader { text-align: center; padding: 36px; color: var(--muted); font-size: 14px; }
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.4);
+backdrop-filter: blur(6px);
+-webkit-backdrop-filter: blur(6px);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:1000;
+animation: fadeIn 0.25s ease-out;
+}
+
+.modal-box{
+background:var(--surface);
+border:1px solid var(--line);
+padding:28px;
+width:420px;
+max-width:90vw;
+border-radius:var(--radius-lg);
+box-shadow: var(--shadow-lg);
+animation: scaleIn 0.3s cubic-bezier(.16,1,.3,1);
+}
+
+.modal-box h3{
+font-size:18px;
+margin-bottom:16px;
+}
+
+.modal-box input,
+.modal-box textarea,
+.modal-box select{
+width:100%;
+padding:10px 12px;
+margin-bottom:12px;
+border:1px solid var(--line);
+border-radius:var(--radius-sm);
+font:inherit;
+font-size:14px;
+background:var(--surface);
+}
+
+.modal-box input:focus,
+.modal-box textarea:focus,
+.modal-box select:focus{
+outline:none;
+border-color:var(--accent);
+box-shadow:var(--ring);
+}
+
+.modal-box button{
+padding:10px 18px;
+margin-right:10px;
+border:none;
+border-radius:var(--radius-sm);
+font:inherit;
+font-weight:600;
+cursor:pointer;
+background:var(--ink);
+color:#fff;
+transition:background .15s;
+}
+
+.modal-box button:hover{ background:var(--accent-dark); }
+
+.modal-box button:last-child{
+background:transparent;
+color:var(--text);
+border:1px solid var(--line);
+}
+
+.modal-box button:last-child:hover{ background:var(--surface-2); }
+
+/* Drag and Drop Zone styling */
+.drag-drop-zone {
+    border: 2px dashed var(--line-strong);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+    margin-bottom: 12px;
+}
+.drag-drop-zone.hover {
+    border-color: var(--accent);
+    background: var(--surface-2);
+}
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.preview-thumbnail {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--line);
+}
+.preview-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.preview-thumbnail-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    line-height: 1;
+}
+.preview-thumbnail-remove:hover {
+    background: var(--danger);
+}
+</style>
+
+<script src="theme.js?v=5"></script>
+</head>
+
+
+<body>
+
+<header class="navbar">
+
+<a class="brand" href="index.html">CraftNext</a>
+
+<div>
+<a href="index.html">Home</a>
+<a href="#" onclick="Auth.logout()">Logout</a>
+</div>
+
+</header>
+
+
+<section class="dashboard">
+
+<div class="topbar">
+
+<h2 id="welcome"></h2>
+
+<button onclick="openAddModal()">+ Add Product</button>
+
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('products', this)">My Products</button>
+  <button class="tab-btn" onclick="showTab('orders', this)">Orders</button>
+  <button class="tab-btn" onclick="showTab('analytics', this)">Analytics</button>
+  <button class="tab-btn" onclick="showTab('broadcasts', this)">Broadcasts</button>
+  <button class="tab-btn" onclick="showTab('chats', this)">Inbox</button>
+</div>
+
+<div class="tab-panel active" id="tab-products">
+  <div id="productGrid" class="products-grid"></div>
+</div>
+
+<div class="tab-panel" id="tab-orders">
+  <div class="data-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Buyer</th>
+          <th>Items (yours)</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTableBody">
+        <tr><td colspan="6" class="loader">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-analytics">
+  <div id="sellerStatsRow" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px;"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;min-width:0;">
+      <h3 style="font-size:15px;margin-bottom:14px;font-family:var(--font-serif)">Revenue (Last 6 Months)</h3>
+      <canvas id="sellerRevenueChart" height="220"></canvas>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;min-width:0;">
+      <h3 style="font-size:15px;margin-bottom:14px;font-family:var(--font-serif)">Order Status</h3>
+      <canvas id="sellerStatusChart" height="220"></canvas>
+    </div>
+  </div>
+  <p id="analyticsEmpty" style="display:none;color:var(--muted);text-align:center;padding:30px">No orders yet — analytics will appear after your first sale.</p>
+</div>
+
+<div class="tab-panel" id="tab-broadcasts">
+  <div class="data-table-wrapper" style="max-width: 800px; margin-bottom: 24px; border: 1px solid var(--line); border-radius: var(--radius); padding: 22px;">
+    <h3 style="margin-bottom: 16px; font-family: var(--font-serif)">Post a New Broadcast Update</h3>
+    <textarea id="broadcastInput" placeholder="Write your announcement here (e.g. New Lippan art incoming, discount codes, daily specials...)" style="width: 100%; min-height: 100px; padding: 12px; border-radius: var(--radius-sm); border: 1.5px solid var(--line); font: inherit; outline: none; margin-bottom: 12px; resize: vertical; background: var(--surface); color: var(--text);"></textarea>
+    <button onclick="postBroadcast()" style="padding: 10px 20px; background: var(--ink); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font: inherit;">Publish Announcement</button>
+  </div>
+  
+  <h3 style="margin-bottom: 16px; font-family: var(--font-serif)">Past Announcements</h3>
+  <div class="broadcast-list" id="dashboardBroadcastList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+</div>
+
+<div class="tab-panel" id="tab-chats">
+  <div style="display: grid; grid-template-columns: 240px 1fr; gap: 24px; min-height: 500px;">
+    <!-- Conversations Sidebar -->
+    <div style="background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; overflow-y: auto;">
+      <h3 style="font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; font-family: var(--font-serif)">Conversations</h3>
+      <div id="dashboardChatList" style="display: flex; flex-direction: column; gap: 8px;">
+        <p style="font-size: 13px; color: var(--muted); text-align: center;">No active chats</p>
+      </div>
+    </div>
+    
+    <!-- Chat History Pane -->
+    <div id="dashboardChatPane" style="background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; height: 500px;">
+      <div style="border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 id="dashboardChatPartnerName" style="font-size: 16px; font-family: var(--font-serif)">Select a conversation</h3>
+      </div>
+      <div id="dashboardChatMessages" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 16px;">
+        <p style="color: var(--muted); text-align: center; margin-top: 100px;">Please select a buyer from the sidebar to chat</p>
+      </div>
+      <div id="dashboardChatInputArea" style="display: flex; gap: 8px; display: none;">
+        <input type="text" id="dashboardChatInput" placeholder="Type your reply..." style="flex: 1; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); font: inherit; outline: none; background: var(--surface); color: var(--text);" onkeydown="if(event.key === 'Enter') sendDashboardChatMessage()">
+        <button onclick="sendDashboardChatMessage()" style="padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; font: inherit;">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<h3 id="modalTitle">Add New Product</h3>
+
+<input id="pName" placeholder="Product Name">
+
+<textarea id="pDesc" placeholder="Description"></textarea>
+
+<input id="pPrice" type="number" placeholder="Price">
+
+<input id="pStock" type="number" placeholder="Stock" value="10">
+
+<select id="pCategory">
+
+<option value="spiritual">Spiritual</option>
+<option value="clock">Clock</option>
+<option value="lippan">Lippan</option>
+<option value="diya">Diya</option>
+<option value="zharokha">Zharokha</option>
+<option value="toran">Toran</option>
+<option value="pipe-cleaner">Pipe Cleaner</option>
+<option value="puja-thali">Puja Thali</option>
+<option value="other">Other</option>
+
+</select>
+
+<div class="drag-drop-zone" id="dragDropZone">
+    <svg class="icon upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:32px;height:32px;margin-bottom:8px;color:var(--muted)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+    <p style="margin:0;font-size:13px;color:var(--muted)">Drag & drop images here or <span style="color:var(--accent-ink);font-weight:600;text-decoration:underline;cursor:pointer">browse</span></p>
+    <input type="file" id="pImgFile" accept="image/*" multiple style="display:none">
+</div>
+<div id="imagePreviewContainer" class="image-preview-container"></div>
+<p id="editImgHint" style="display:none;font-size:12px;color:var(--muted);margin:8px 0 12px">Image can't be changed here — remove and re-add the product to replace it.</p>
+
+<button id="saveBtn" onclick="saveProduct()">Add Product</button>
+<button onclick="closeModal()">Cancel</button>
+
+</div>
+
+</div>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+<script>
+
+/* AUTH CHECK */
+
+const user = getUser(); // guarded parse from api.js
+
+if(!user || user.role !== "seller"){
+alert("Seller login required");
+window.location.href="login.html";
+}
+
+document.getElementById("welcome").innerText =
+"Welcome, " + user.name;
+
+
+/* TABS */
+
+function showTab(name, btn) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  btn.classList.add("active");
+  if (name === "orders") loadOrders();
+  if (name === "analytics") loadAnalytics();
+  if (name === "broadcasts") loadBroadcasts();
+  if (name === "chats") loadChats();
+}
+
+
+/* ================= SELLER ANALYTICS =================
+   Computed client-side from this seller's own order slice — revenue
+   counts only THIS seller's items inside each (possibly multi-seller)
+   order. Chart.js is loaded lazily the first time the tab opens. */
+
+let sellerCharts = {};
+
+function loadChartJs() {
+  return new Promise((resolve, reject) => {
+    if (window.Chart) return resolve();
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js";
+    s.onload = resolve;
+    s.onerror = () => reject(new Error("Chart.js failed to load"));
+    document.head.appendChild(s);
+  });
+}
+
+async function loadAnalytics() {
+  try {
+    await loadChartJs();
+    const orders = await Orders.sellerOrders();
+
+    const mineIn = (o) => o.items.filter(i =>
+      i.seller === user._id || i.sellerName === user.shopName || i.sellerName === user.name);
+
+    const live = orders.filter(o => o.status !== "cancelled");
+    let revenue = 0, itemsSold = 0;
+    live.forEach(o => mineIn(o).forEach(i => { revenue += i.price * i.qty; itemsSold += i.qty; }));
+
+    document.getElementById("sellerStatsRow").innerHTML = [
+      ["₹" + revenue.toLocaleString("en-IN"), "My Revenue"],
+      [live.length, "Orders"],
+      [itemsSold, "Items Sold"],
+      ["₹" + (live.length ? Math.round(revenue / live.length).toLocaleString("en-IN") : 0), "Avg Order"],
+    ].map(([v, l]) => `
+      <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-align:center;">
+        <div style="font-size:22px;font-weight:700;font-family:var(--font-serif);color:var(--ink)">${v}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">${l}</div>
+      </div>`).join("");
+
+    const hasData = orders.length > 0;
+    document.getElementById("analyticsEmpty").style.display = hasData ? "none" : "block";
+    if (!hasData) return;
+
+    // Revenue by month (last 6)
+    const months = [];
+    const now = new Date();
+    for (let k = 5; k >= 0; k--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - k, 1);
+      months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("en-IN", { month: "short", year: "2-digit" }), total: 0 });
+    }
+    live.forEach(o => {
+      const d = new Date(o.createdAt);
+      const m = months.find(x => x.key === `${d.getFullYear()}-${d.getMonth()}`);
+      if (m) mineIn(o).forEach(i => { m.total += i.price * i.qty; });
+    });
+
+    // Status distribution
+    const statuses = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+    const statusCounts = statuses.map(s => orders.filter(o => o.status === s).length);
+
+    Object.values(sellerCharts).forEach(c => c.destroy());
+    sellerCharts.revenue = new Chart(document.getElementById("sellerRevenueChart"), {
+      type: "bar",
+      data: {
+        labels: months.map(m => m.label),
+        datasets: [{ data: months.map(m => m.total), backgroundColor: "rgba(182,83,43,0.75)", borderColor: "#b6532b", borderWidth: 1, borderRadius: 6 }]
+      },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+    sellerCharts.status = new Chart(document.getElementById("sellerStatusChart"), {
+      type: "doughnut",
+      data: {
+        labels: statuses,
+        datasets: [{ data: statusCounts, backgroundColor: ["#93702e", "#3e6c8c", "#7a7266", "#4b7a52", "#8f4322"], borderColor: "#fff", borderWidth: 2 }]
+      },
+      options: { plugins: { legend: { position: "bottom" } } }
+    });
+  } catch (err) {
+    document.getElementById("sellerStatsRow").innerHTML =
+      `<p style="color:var(--danger)">Could not load analytics: ${esc(err.message)}</p>`;
+  }
+}
+
+
+/* MODAL */
+
+let editingId = null;
+let uploadedFiles = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+  const zone = document.getElementById("dragDropZone");
+  const input = document.getElementById("pImgFile");
+  if (zone && input) {
+    zone.addEventListener("click", () => input.click());
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      zone.classList.add("hover");
+    });
+    zone.addEventListener("dragleave", () => {
+      zone.classList.remove("hover");
+    });
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("hover");
+      handleFiles(e.dataTransfer.files);
+    });
+    input.addEventListener("change", (e) => {
+      handleFiles(e.target.files);
+    });
+  }
+});
+
+function handleFiles(files) {
+  for (const file of files) {
+    if (file.type.startsWith("image/")) {
+      uploadedFiles.push(file);
+    }
+  }
+  renderPreviews();
+}
+
+function removeFile(index) {
+  uploadedFiles.splice(index, 1);
+  renderPreviews();
+}
+
+function renderPreviews() {
+  const container = document.getElementById("imagePreviewContainer");
+  if (!container) return;
+  container.innerHTML = "";
+  uploadedFiles.forEach((file, idx) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const div = document.createElement("div");
+      div.className = "preview-thumbnail";
+      div.innerHTML = `
+        <img src="${e.target.result}" alt="Preview">
+        <button class="preview-thumbnail-remove" onclick="removeFile(${idx})" type="button">&times;</button>
+      `;
+      container.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function openAddModal(){
+  editingId = null;
+  uploadedFiles = [];
+  renderPreviews();
+  document.getElementById("modalTitle").textContent = "Add New Product";
+  document.getElementById("saveBtn").textContent = "Add Product";
+  document.getElementById("pName").value = "";
+  document.getElementById("pDesc").value = "";
+  document.getElementById("pPrice").value = "";
+  document.getElementById("pStock").value = "10";
+  document.getElementById("pCategory").value = "clock";
+  document.getElementById("dragDropZone").style.display = "block";
+  document.getElementById("editImgHint").style.display = "none";
+  document.getElementById("modal").style.display="flex";
+}
+
+function openEditModal(id){
+  const p = productsCache.find(x => x._id === id);
+  if (!p) return;
+  editingId = p._id;
+  uploadedFiles = [];
+  renderPreviews();
+  document.getElementById("modalTitle").textContent = "Edit Product";
+  document.getElementById("saveBtn").textContent = "Save Changes";
+  document.getElementById("pName").value = p.name;
+  document.getElementById("pDesc").value = p.description || "";
+  document.getElementById("pPrice").value = p.price;
+  document.getElementById("pStock").value = p.stock;
+  document.getElementById("pCategory").value = p.category;
+  document.getElementById("dragDropZone").style.display = "none";
+  document.getElementById("editImgHint").style.display = "block";
+  document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+
+/* SAVE PRODUCT (add or edit) */
+
+async function saveProduct(){
+
+  const name = document.getElementById("pName").value;
+  const description = document.getElementById("pDesc").value;
+  const price = document.getElementById("pPrice").value;
+  const stock = document.getElementById("pStock").value;
+  const category = document.getElementById("pCategory").value;
+
+  if(!name || !price || !category){
+    alert("Please fill required fields");
+    return;
+  }
+
+  try {
+    if (editingId) {
+      await Products.update(editingId, { name, description, price: Number(price), stock: Number(stock), category });
+    } else {
+      if (uploadedFiles.length === 0) {
+        alert("Please add at least one product photo");
+        return;
+      }
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("stock", stock);
+      formData.append("category", category);
+      for (const file of uploadedFiles) {
+        formData.append("images", file);
+      }
+
+      await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: formData,
+      });
+    }
+
+    closeModal();
+    loadProducts();
+  } catch (err) {
+    alert(err.message || "Could not save product");
+  }
+
+}
+
+
+/* DELETE PRODUCT */
+
+async function deleteProduct(id){
+
+if(!confirm("Remove this product?")) return;
+
+try {
+  await Products.delete(id);
+  loadProducts();
+} catch (err) {
+  alert(err.message || "Could not remove product");
+}
+
+}
+
+
+/* LOAD SELLER PRODUCTS */
+
+let productsCache = [];
+
+async function loadProducts(){
+
+const grid = document.getElementById("productGrid");
+grid.innerHTML = `<p style="color:var(--muted);padding:20px">Loading…</p>`;
+
+try {
+  productsCache = await Products.mine();
+
+  if (!productsCache.length) {
+    grid.innerHTML = `<div class="empty-state"><p>No products yet. Add your first one!</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = productsCache.map(p => `
+    <div class="product-card">
+      <img src="${imgUrl(p.img)}" class="product-img" onerror="this.onerror=null;this.src='Images/placeholder.svg'">
+      <div class="product-info">
+        <h4>${esc(p.name)}</h4>
+        <p class="category">${esc(p.category)}</p>
+        <p class="price">₹${p.price.toLocaleString("en-IN")}</p>
+        <p style="font-size:12px;color:var(--muted)">Stock: ${p.stock}</p>
+        ${p.isApproved === false ? `<p style="font-size:12px;color:var(--warning,#b6832b);font-weight:600">Pending admin approval</p>` : ""}
+        <div class="product-card-actions">
+          <button class="edit-btn" onclick="openEditModal('${p._id}')">Edit</button>
+          <button class="delete-btn" onclick="deleteProduct('${p._id}')">Remove</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+} catch (err) {
+  grid.innerHTML = `<p style="color:var(--danger);padding:20px">Could not load products.</p>`;
+}
+
+}
+
+
+/* LOAD SELLER ORDERS */
+
+async function loadOrders() {
+  const tbody = document.getElementById("ordersTableBody");
+  tbody.innerHTML = `<tr><td colspan="6" class="loader">Loading…</td></tr>`;
+
+  try {
+    const orders = await Orders.sellerOrders();
+
+    if (!orders.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><p>No orders yet.</p></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = orders.map(o => {
+      const mine = o.items.filter(i => i.seller === user._id || i.sellerName === user.shopName || i.sellerName === user.name);
+      const itemsLabel = mine.map(i => `${i.name} × ${i.qty}`).join(", ") || "—";
+      return `
+        <tr>
+          <td><code style="font-size:11px">#${o._id.slice(-6).toUpperCase()}</code></td>
+          <td>${esc(o.buyerName || "Guest")}<br><small style="color:var(--muted)">${esc(o.buyerEmail || "")}</small></td>
+          <td>${esc(itemsLabel)}</td>
+          <td><span class="status-badge status-${o.status}">${o.status}</span></td>
+          <td>${new Date(o.createdAt).toLocaleDateString("en-IN")}</td>
+          <td>
+            <select class="status-select" onchange="updateOrderStatus('${o._id}', this.value)">
+              ${["pending","confirmed","shipped","delivered","cancelled"].map(s =>
+                `<option value="${s}" ${o.status===s?"selected":""}>${s}</option>`
+              ).join("")}
+            </select>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--danger)">Could not load orders.</td></tr>`;
+  }
+}
+
+async function updateOrderStatus(id, status) {
+  try {
+    await Orders.updateStatus(id, status);
+  } catch (err) {
+    alert(err.message || "Could not update status");
+    loadOrders();
+  }
+}
+
+
+loadProducts();
+
+
+/* ================= BROADCASTS LOGIC ================= */
+
+async function loadBroadcasts() {
+  const container = document.getElementById("dashboardBroadcastList");
+  container.innerHTML = "<p class='loader'>Loading announcements…</p>";
+  try {
+    const profile = await Auth.me();
+    const broadcasts = profile.broadcasts || [];
+    if (!broadcasts.length) {
+      container.innerHTML = "<p style='color: var(--muted); padding: 24px; text-align: center;'>No announcements posted yet.</p>";
+      return;
+    }
+    container.innerHTML = broadcasts.map(b => `
+      <div style="background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 20px; max-width: 800px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: var(--shadow-sm);">
+        <div>
+          <div style="color: var(--muted); font-size: 11px; margin-bottom: 6px; font-weight: 500;">Published on ${new Date(b.createdAt).toLocaleDateString("en-IN", { dateStyle: "medium" })}</div>
+          <div style="font-size: 14.5px; color: var(--text); line-height: 1.5; white-space: pre-wrap;">${esc(b.message)}</div>
+        </div>
+      </div>
+    `).join("");
+  } catch (err) {
+    container.innerHTML = "<p style='color: var(--danger); padding: 24px; text-align: center;'>Failed to load announcements.</p>";
+  }
+}
+
+async function postBroadcast() {
+  const input = document.getElementById("broadcastInput");
+  const text = input.value.trim();
+  if (!text) return;
+  
+  try {
+    await Auth.broadcast(text);
+    input.value = "";
+    showToast("Announcement published successfully!", "success");
+    loadBroadcasts();
+  } catch (err) {
+    showToast(err.message || "Failed to publish announcement", "error");
+  }
+}
+
+
+/* ================= INBOX / CHATS LOGIC ================= */
+
+let activeConversationUserId = null;
+let chatPaneTimer = null;
+
+async function loadChats() {
+  const sidebar = document.getElementById("dashboardChatList");
+  try {
+    const convs = await Messages.getConversations();
+    if (!convs.length) {
+      sidebar.innerHTML = "<p style='font-size: 13px; color: var(--muted); text-align: center; margin-top: 20px;'>No messages received yet.</p>";
+      return;
+    }
+
+    sidebar.innerHTML = convs.map(c => {
+      const activeClass = activeConversationUserId === c.partner._id ? "active" : "";
+      return `
+        <div onclick="selectConversation('${c.partner._id}', '${esc(c.partner.name)}')" class="chat-list-item ${activeClass}" style="padding: 12px 14px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.2s; border: 1.5px solid var(--line); display: flex; flex-direction: column; gap: 4px; ${activeConversationUserId === c.partner._id ? "background: var(--surface-2); border-color: var(--line-strong);" : "background: var(--surface);"}" onmouseover="this.style.background='var(--surface-2)'" onmouseout="if('${activeConversationUserId}' !== '${c.partner._id}') this.style.background='var(--surface)'">
+          <strong style="font-size: 13.5px; color: var(--ink);">${esc(c.partner.name)}</strong>
+          <span style="font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">${esc(c.lastMessage)}</span>
+        </div>
+      `;
+    }).join("");
+  } catch (err) {
+    sidebar.innerHTML = "<p style='font-size: 11px; color: var(--danger);'>Failed to load inbox.</p>";
+  }
+}
+
+function selectConversation(userId, partnerName) {
+  activeConversationUserId = userId;
+  document.getElementById("dashboardChatPartnerName").innerText = partnerName;
+  document.getElementById("dashboardChatInputArea").style.display = "flex";
+  
+  loadChats();
+  loadConversationMessages();
+  
+  if (chatPaneTimer) clearInterval(chatPaneTimer);
+  chatPaneTimer = setInterval(loadConversationMessages, 3000);
+}
+
+async function loadConversationMessages() {
+  if (!activeConversationUserId) return;
+  const box = document.getElementById("dashboardChatMessages");
+  try {
+    const messages = await Messages.getHistory(activeConversationUserId);
+    const atBottom = box.scrollHeight - box.scrollTop <= box.clientHeight + 40;
+
+    box.innerHTML = messages.map(m => {
+      const isSent = m.sender === user._id || (m.sender._id && m.sender._id === user._id);
+      const timeStr = new Date(m.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      return `
+        <div style="max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; word-break: break-word; margin-bottom: 8px; ${
+          isSent
+            ? "align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 3px;"
+            : "align-self: flex-start; background: var(--surface); color: var(--text); border-bottom-left-radius: 3px; border: 1px solid var(--line);"
+        }">
+          <div>${esc(m.content)}</div>
+          <span style="font-size: 9px; color: ${isSent ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.3)"}; margin-top: 4px; display: block; text-align: right;">${timeStr}</span>
+        </div>
+      `;
+    }).join("");
+
+    if (atBottom || box.scrollTop === 0) {
+      box.scrollTop = box.scrollHeight;
+    }
+  } catch (err) {
+    console.error("Failed to load messages:", err);
+  }
+}
+
+async function sendDashboardChatMessage() {
+  const input = document.getElementById("dashboardChatInput");
+  const text = input.value.trim();
+  if (!text || !activeConversationUserId) return;
+
+  try {
+    await Messages.send(activeConversationUserId, text);
+    input.value = "";
+    loadConversationMessages();
+    loadChats();
+  } catch (err) {
+    showToast("Failed to send message", "error");
+  }
+}
+
+window.addEventListener("blur", () => {
+  if (chatPaneTimer) { clearInterval(chatPaneTimer); chatPaneTimer = null; }
+});
+
+</script>
+
+</body>
+</html>

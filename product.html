@@ -1,0 +1,625 @@
+<!-- this is product.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="View handmade product details, photos, reviews and related pieces on CraftNext.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Product Detail – CraftNext">
+<meta property="og:description" content="View handmade product details, photos, reviews and related pieces on CraftNext.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Product Detail – CraftNext</title>
+<link rel="stylesheet" href="style.css?v=5">
+
+<style>/* Layout, image, price, qty, and buy/cart button rules live in style.css
+   (.product-page/.product-container/.price/.qty-box/.cart-btn/.buy-btn) —
+   only the reviews section is page-specific. */
+
+.reviews-section{ padding:0 clamp(20px,8vw,8%) 60px; max-width:1240px; margin:auto; }
+.reviews-section h2{ font-size:22px; margin-bottom:8px; font-family:var(--font-serif); }
+.review-summary{ color:var(--muted); margin-bottom:20px; font-size:14px; }
+.review-form{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:24px; margin-bottom:24px; max-width:560px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.review-form select, .review-form textarea{ width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:var(--radius); margin-bottom:14px; font-size:14px; font:inherit; background:var(--surface); transition: border-color .15s, box-shadow .15s; }
+.review-form select:focus, .review-form textarea:focus{ outline:none; border-color:var(--accent); box-shadow: 0 0 0 3px rgba(224,98,54,0.1); }
+.review-form textarea{ resize:vertical; min-height:80px; }
+.review-form button{ background:var(--ink); color:#fff; border:none; padding:12px 24px; border-radius:999px; font:inherit; font-weight:600; cursor:pointer; transition:background .2s, box-shadow .2s, transform .12s; }
+.review-form button:hover{ background:var(--accent-dark); box-shadow: 0 4px 14px rgba(224,98,54,0.2); }
+.review-form button:active{ transform: scale(0.97); }
+.review-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px; margin-bottom:14px; max-width:560px; transition: box-shadow .2s; }
+.review-card:hover{ box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+.review-card .who{ font-weight:600; margin-right:8px; }
+.review-card .stars{ color:var(--warn); letter-spacing:1px; }
+.review-card .when{ color:var(--muted); font-size:12px; margin-top:3px; }
+.review-card .text{ margin-top:8px; color:var(--text); line-height:1.5; }
+
+.related-section{ padding:0 clamp(20px,8vw,8%) 20px; max-width:1240px; margin:auto; }
+.related-section h2{ font-size:22px; margin-bottom:18px; font-family:var(--font-serif); }
+
+/* Image Magnification Lens */
+.product-main-img-wrapper {
+    position: relative;
+    cursor: crosshair;
+}
+
+.magnify-lens {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.85);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(0,0,0,0.08);
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+    will-change: transform, opacity;
+}
+
+.product-main-img-wrapper:hover .magnify-lens {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (max-width: 760px) {
+    .magnify-lens { display: none; }
+    .product-main-img-wrapper { cursor: default; }
+}
+.social-action-btn:hover {
+    background: var(--surface-2) !important;
+    border-color: var(--ink) !important;
+    color: var(--ink) !important;
+}
+.social-action-btn:active {
+    transform: scale(0.97);
+}
+</style>
+
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+<a class="brand" href="index.html">CraftNext</a>
+
+<nav>
+<div class="nav-links">
+<a href="index.html" class="back-btn">← Back</a>
+<span id="navUser"></span>
+</div>
+</nav>
+
+</header>
+
+
+<section class="product-page">
+
+<div class="product-container">
+
+<!-- IMAGE GALLERY -->
+<div class="product-left">
+  <div id="productThumbnails" class="product-thumbnails" style="display:none"></div>
+  <div class="product-main-img-wrapper">
+    <img id="productImage">
+  </div>
+</div>
+
+<!-- DETAILS (Etsy Style) -->
+<div class="product-right">
+  
+  <div class="shop-badge">
+    <span id="shopBadgeName" class="shop-name-label"></span>
+    <span class="shop-sales">· 1,480 sales | ★★★★★</span>
+  </div>
+
+  <h1 id="productName" class="etsy-title"></h1>
+
+  <div id="productRating" class="rating" style="margin-bottom:14px"></div>
+
+  <div class="price-section">
+    <span id="productPrice" class="etsy-price"></span>
+    <span class="tax-info">Local taxes included (where applicable)</span>
+  </div>
+
+  <!-- HIGHLIGHTS -->
+  <div class="highlights-box">
+    <div class="highlight-item">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span><strong>Handmade</strong> — crafted with love in India</span>
+    </div>
+    <div class="highlight-item">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span>Ships from <strong id="productSellerLocation">Gujarat, India</strong></span>
+    </div>
+    <div class="highlight-item">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      <span>Ready to ship in 1-2 business days</span>
+    </div>
+  </div>
+
+  <!-- PURCHASE ACTIONS -->
+  <div class="purchase-box">
+    <div class="qty-selector-row">
+      <label>Quantity</label>
+      <div class="qty-box">
+        <button id="minus">-</button>
+        <span id="qty">1</span>
+        <button id="plus">+</button>
+      </div>
+    </div>
+    
+    <button id="addCartBtn" class="etsy-add-btn">Add to Cart</button>
+    <button id="buyBtn" class="etsy-buy-btn">Buy It Now</button>
+    
+    <div class="product-social-row" style="display: flex; gap: 12px; margin-top: 12px;">
+      <button id="likeBtn" class="social-action-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--line-strong); background: var(--surface); color: var(--text); font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <span id="likeHeart" style="font-size: 16px; color: var(--muted); transition: color 0.2s;">♥</span>
+        <span id="likeCount">0</span> Likes
+      </button>
+      <button id="shareBtn" class="social-action-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--line-strong); background: var(--surface); color: var(--text); font-weight: 600; cursor: pointer; transition: all 0.2s;">
+        <span>🔗</span> Share
+      </button>
+    </div>
+  </div>
+
+  <!-- ACCORDION DETAILS -->
+  <div class="accordion">
+    <div class="accordion-item active" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span>Description</span>
+        <span class="arrow">&#9662;</span>
+      </div>
+      <div class="accordion-content">
+        <p id="productDesc"></p>
+      </div>
+    </div>
+    
+    <div class="accordion-item" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span>Shipping and return policies</span>
+        <span class="arrow">&#9656;</span>
+      </div>
+      <div class="accordion-content">
+        <p style="margin-bottom:8px"><strong>Cost to ship:</strong> Free shipping on orders above ₹999! (Otherwise a flat fee of ₹49 applies).</p>
+        <p style="margin-bottom:8px"><strong>Delivery time:</strong> Expect delivery within 3-5 business days from dispatch.</p>
+        <p><strong>Returns:</strong> Accepted within 14 days of delivery. Buyer covers return shipping costs.</p>
+      </div>
+    </div>
+    
+    <div class="accordion-item" onclick="toggleAccordion(this)">
+      <div class="accordion-header">
+        <span>Meet the creator</span>
+        <span class="arrow">&#9656;</span>
+      </div>
+      <div class="accordion-content">
+        <div class="meet-seller-row">
+          <img id="sellerAvatar" src="Images/Clock/Ganesha Image.jpg" class="meet-seller-img">
+          <div>
+            <h4 id="sellerShopName" style="margin-bottom:4px"></h4>
+            <p id="sellerShopDesc" style="font-size:12px;color:var(--muted);line-height:1.4"></p>
+            <button class="contact-seller-btn" onclick="location.href='contact.html'">Message Creator</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- RELATED PRODUCTS -->
+<section class="related-section" id="relatedSection" style="display:none">
+  <h2>You may also like</h2>
+  <div class="product-grid" id="relatedGrid"></div>
+</section>
+
+
+<!-- REVIEWS -->
+<section class="reviews-section">
+  <h2>Reviews</h2>
+  <div class="review-summary" id="reviewSummary"></div>
+  <div id="ratingBreakdown" class="rating-breakdown" style="display:none"></div>
+
+  <form class="review-form" id="reviewForm" style="display:none">
+    <select id="reviewRating" aria-label="Your rating">
+      <option value="5">★★★★★ — Excellent</option>
+      <option value="4">★★★★ — Good</option>
+      <option value="3">★★★ — Average</option>
+      <option value="2">★★ — Poor</option>
+      <option value="1">★ — Bad</option>
+    </select>
+    <textarea id="reviewComment" placeholder="Share your thoughts (optional)"></textarea>
+    <button type="submit">Submit Review</button>
+  </form>
+
+  <p id="reviewLoginHint" style="display:none;color:#888">
+    <a href="login.html">Log in</a> to leave a review.
+  </p>
+
+  <div id="reviewList"></div>
+</section>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+
+
+<script>
+
+/* ================= NAVBAR AUTH ================= */
+
+const navUser = document.getElementById("navUser");
+
+const user = getUser(); // guarded parse from api.js
+
+if(user){
+
+navUser.innerHTML = `
+<span style="margin-left:10px;">Hi, ${user.name}</span>
+${user.role === "admin" ? '<a href="admin.html" style="margin-left:10px;">Admin Panel</a>' : ""}
+<a href="#" id="logoutBtn" style="margin-left:10px;">Logout</a>
+`;
+
+document.getElementById("logoutBtn").onclick = function(e){
+e.preventDefault();
+Auth.logout();
+};
+
+}else{
+
+navUser.innerHTML = `
+<a href="login.html" style="margin-left:10px;">Login</a>
+`;
+
+}
+
+
+/* ================= GET PRODUCT FROM API ================= */
+
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+let product = null;
+let qty = 1;
+
+async function loadProduct() {
+  if (!id) {
+    document.body.innerHTML = "<h2 style='padding:40px'>Product not found</h2>";
+    return;
+  }
+  try {
+    product = await Products.getById(id);
+  } catch (err) {
+    document.body.innerHTML = "<h2 style='padding:40px'>Product not found</h2>";
+    return;
+  }
+
+  recordRecentlyViewed(product._id);
+
+  const sellerName =
+    product.sellerName ||
+    (product.seller && (product.seller.shopName || product.seller.name)) ||
+    "Seller";
+  
+  const sellerObj = product.seller || {};
+  const sellerLocation = sellerObj.location || "Gujarat, India";
+  const sellerAvatarUrl = sellerObj.avatar ? imgUrl(sellerObj.avatar) : "Images/Clock/Ganesha Image.jpg";
+  const sellerDescription = sellerObj.shopDescription || "Specialized in handcrafted traditional Indian artwork, making unique decor pieces.";
+
+  document.getElementById("shopBadgeName").innerText = sellerName;
+  document.getElementById("sellerShopName").innerText = sellerName;
+  document.getElementById("productSellerLocation").innerText = sellerLocation;
+  document.getElementById("sellerAvatar").src = sellerAvatarUrl;
+  document.getElementById("sellerShopDesc").innerText = sellerDescription;
+
+  document.getElementById("productImage").src = imgUrl(product.img);
+  document.getElementById("productImage").alt = product.name;
+  document.getElementById("productName").innerText = product.name;
+  document.getElementById("productPrice").innerText = "₹" + Number(product.price).toLocaleString("en-IN");
+  document.getElementById("productDesc").innerText = product.description || "";
+  document.getElementById("productRating").innerText = starString(product.rating);
+  document.title = product.name + " – CraftNext";
+
+  // Build gallery thumbnails
+  const thumbnailsDiv = document.getElementById("productThumbnails");
+  const allImages = [product.img, ...(product.images || [])].filter((val, idx, self) => val && self.indexOf(val) === idx);
+  
+  if (allImages.length > 1) {
+    thumbnailsDiv.innerHTML = allImages.map((img, idx) => `
+      <img class="product-thumbnail ${idx === 0 ? "active" : ""}" src="${imgUrl(img)}" data-idx="${idx}" alt="Thumbnail">
+    `).join("");
+    thumbnailsDiv.style.display = "flex";
+    
+    // Add event listeners to swap main image
+    document.querySelectorAll(".product-thumbnail").forEach(thumb => {
+      thumb.addEventListener("click", function() {
+        document.querySelectorAll(".product-thumbnail").forEach(t => t.classList.remove("active"));
+        this.classList.add("active");
+        document.getElementById("productImage").src = this.src;
+      });
+      thumb.addEventListener("mouseover", function() {
+        document.querySelectorAll(".product-thumbnail").forEach(t => t.classList.remove("active"));
+        this.classList.add("active");
+        document.getElementById("productImage").src = this.src;
+      });
+    });
+  } else {
+    thumbnailsDiv.style.display = "none";
+  }
+
+  // Initialize magnification lens
+  initMagnifyLens();
+
+  // Social / Messaging setup
+  const likeCountEl = document.getElementById("likeCount");
+  const likeHeartEl = document.getElementById("likeHeart");
+  const likeBtn = document.getElementById("likeBtn");
+  const shareBtn = document.getElementById("shareBtn");
+
+  const likesList = product.likes || [];
+  likeCountEl.innerText = likesList.length;
+
+  if (user && likesList.includes(user._id)) {
+    likeHeartEl.style.color = "var(--danger)";
+  } else {
+    likeHeartEl.style.color = "var(--muted)";
+  }
+
+  likeBtn.onclick = async function() {
+    if (!user) {
+      showToast("Please login to like this artwork", "error");
+      setTimeout(() => { location.href = "login.html"; }, 1000);
+      return;
+    }
+    try {
+      const res = await Products.like(product._id);
+      likeCountEl.innerText = res.likesCount;
+      if (res.liked) {
+        likeHeartEl.style.color = "var(--danger)";
+        showToast("Added to liked artworks!", "success");
+      } else {
+        likeHeartEl.style.color = "var(--muted)";
+        showToast("Removed from liked artworks", "info");
+      }
+    } catch (err) {
+      showToast(err.message || "Failed to toggle like", "error");
+    }
+  };
+
+  shareBtn.onclick = function() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      showToast("Product link copied to clipboard!", "success");
+    }).catch(err => {
+      showToast("Failed to copy link", "error");
+    });
+  };
+
+  const creatorBtn = document.querySelector(".contact-seller-btn");
+  if (creatorBtn) {
+    creatorBtn.onclick = function() {
+      const sellerId = product.seller && product.seller._id ? product.seller._id : product.seller;
+      location.href = `seller.html?seller=${sellerId}&openChat=true`;
+    };
+  }
+}
+
+/* ================= MAGNIFY LENS ================= */
+
+function initMagnifyLens() {
+  const wrapper = document.querySelector(".product-main-img-wrapper");
+  const img = document.getElementById("productImage");
+  if (!wrapper || !img) return;
+
+  // Remove any existing lens
+  const oldLens = wrapper.querySelector(".magnify-lens");
+  if (oldLens) oldLens.remove();
+
+  const lens = document.createElement("div");
+  lens.className = "magnify-lens";
+  wrapper.appendChild(lens);
+
+  const ZOOM = 2.5;
+  const LENS_SIZE = 180;
+
+  function moveLens(e) {
+    const rect = wrapper.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    // Clamp to wrapper bounds
+    x = Math.max(0, Math.min(x, rect.width));
+    y = Math.max(0, Math.min(y, rect.height));
+
+    // Position lens centered on cursor
+    lens.style.left = (x - LENS_SIZE / 2) + "px";
+    lens.style.top = (y - LENS_SIZE / 2) + "px";
+
+    // Set the zoomed background
+    const bgW = rect.width * ZOOM;
+    const bgH = rect.height * ZOOM;
+    const bgX = -(x * ZOOM - LENS_SIZE / 2);
+    const bgY = -(y * ZOOM - LENS_SIZE / 2);
+
+    lens.style.backgroundImage = `url('${img.src}')`;
+    lens.style.backgroundSize = `${bgW}px ${bgH}px`;
+    lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+  }
+
+  wrapper.addEventListener("mousemove", moveLens);
+  wrapper.addEventListener("mouseenter", moveLens);
+}
+
+function toggleAccordion(el) {
+  const isActive = el.classList.contains("active");
+  
+  // Toggle current clicked element
+  if (isActive) {
+    el.classList.remove("active");
+    el.querySelector(".arrow").innerHTML = "&#9656;";
+  } else {
+    el.classList.add("active");
+    el.querySelector(".arrow").innerHTML = "&#9662;";
+  }
+}
+
+
+/* ================= QUANTITY ================= */
+
+document.getElementById("plus").onclick = () => {
+  qty++;
+  document.getElementById("qty").innerText = qty;
+};
+
+document.getElementById("minus").onclick = () => {
+  if (qty > 1) {
+    qty--;
+    document.getElementById("qty").innerText = qty;
+  }
+};
+
+
+/* ================= ADD TO CART / BUY NOW ================= */
+
+document.getElementById("addCartBtn").addEventListener("click", () => {
+  if (!product) return;
+  for (let i = 0; i < qty; i++) addToCart(product);
+});
+
+document.getElementById("buyBtn").addEventListener("click", () => {
+  if (!product) return;
+  for (let i = 0; i < qty; i++) addToCart(product);
+  window.location.href = "checkout.html";
+});
+
+loadProduct().then(loadRelated);
+
+
+/* ================= RELATED PRODUCTS ================= */
+
+async function loadRelated() {
+  if (!product) return;
+  try {
+    const list = await Products.getAll({ category: product.category });
+    const related = list.filter(p => p._id !== product._id).slice(0, 4);
+
+    if (!related.length) return;
+
+    cacheProducts(related);
+    const grid = document.getElementById("relatedGrid");
+    grid.innerHTML = "";
+    related.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = productCardHTML(p);
+      grid.appendChild(card);
+    });
+    renderWishlistIcons();
+    document.getElementById("relatedSection").style.display = "block";
+  } catch (err) {
+    // Related products are a nice-to-have — fail silently, keep the section hidden.
+  }
+}
+
+
+/* ================= REVIEWS ================= */
+
+async function loadReviews() {
+  const listEl = document.getElementById("reviewList");
+  const summaryEl = document.getElementById("reviewSummary");
+  const breakdownEl = document.getElementById("ratingBreakdown");
+
+  try {
+    const reviews = await Products.reviews(id);
+
+    if (!reviews.length) {
+      summaryEl.textContent = "No reviews yet — be the first!";
+      listEl.innerHTML = "";
+      breakdownEl.style.display = "none";
+    } else {
+      const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+      summaryEl.textContent =
+        `${avg.toFixed(1)} ★ average · ${reviews.length} review${reviews.length > 1 ? "s" : ""}`;
+
+      // Calculate star breakdown counts
+      const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+      reviews.forEach(r => {
+        const rating = Math.max(1, Math.min(5, Math.round(Number(r.rating) || 5)));
+        counts[rating] = (counts[rating] || 0) + 1;
+      });
+
+      breakdownEl.innerHTML = `
+        <div class="rating-breakdown-title">Rating Distribution</div>
+        ${[5, 4, 3, 2, 1].map(stars => {
+          const count = counts[stars] || 0;
+          const percent = Math.round((count / reviews.length) * 100);
+          return `
+            <div class="rating-bar-row">
+              <span class="rating-label">${stars} Star</span>
+              <div class="rating-bar-bg">
+                <div class="rating-bar-fill" style="width: ${percent}%"></div>
+              </div>
+              <span class="rating-count">${count}</span>
+            </div>
+          `;
+        }).join("")}
+      `;
+      breakdownEl.style.display = "flex";
+
+      listEl.innerHTML = reviews.map(r => `
+        <div class="review-card">
+          <div><span class="who">${esc(r.name || "User")}</span><span class="stars">${starString(r.rating)}</span></div>
+          <div class="when">${new Date(r.createdAt).toLocaleDateString()}</div>
+          ${r.comment ? `<div class="text">${esc(r.comment)}</div>` : ""}
+        </div>`).join("");
+    }
+  } catch (err) {
+    summaryEl.textContent = "Could not load reviews.";
+    breakdownEl.style.display = "none";
+  }
+
+  if (isLoggedIn()) {
+    document.getElementById("reviewForm").style.display = "block";
+  } else {
+    document.getElementById("reviewLoginHint").style.display = "block";
+  }
+}
+
+document.getElementById("reviewForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const rating = document.getElementById("reviewRating").value;
+  const comment = document.getElementById("reviewComment").value;
+  try {
+    await Products.addReview(id, { rating, comment });
+    showToast("Thanks for your review!", "success");
+    document.getElementById("reviewComment").value = "";
+    await loadReviews();
+    const fresh = await Products.getById(id);   // refresh the rating shown up top
+    document.getElementById("productRating").innerText = starString(fresh.rating);
+  } catch (err) {
+    showToast(err.message || "Could not submit review", "error");
+  }
+});
+
+loadReviews();
+
+</script>
+
+</body>
+</html>

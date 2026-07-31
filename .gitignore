@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# Uploaded user content (runtime data, not source)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db
+
+# JARVIS personal-data exports — never commit financial backups (ORD-1508a)
+jarvis-backup-*.json
+jarvis/*.backup.json

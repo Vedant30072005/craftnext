@@ -1,0 +1,675 @@
+<!-- this is seller.html -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Artisan shop page on CraftNext - browse all products from one creator.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b3491f">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CraftNext">
+<meta property="og:title" content="Seller Shop – CraftNext">
+<meta property="og:description" content="Artisan shop page on CraftNext - browse all products from one creator.">
+<meta property="og:image" content="Images/Lippan Art/best1.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Seller Shop – CraftNext</title>
+<link rel="stylesheet" href="style.css?v=5">
+<style>
+/* CSS FOR SELLER PAGE AND TABS */
+.seller-header-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px clamp(20px, 6vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: var(--shadow);
+  margin: 30px auto;
+  max-width: 1000px;
+}
+
+@media (min-width: 768px) {
+  .seller-header-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.seller-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.seller-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--line-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.seller-details h2 {
+  font-size: 26px;
+  margin-bottom: 6px;
+  font-family: var(--font-serif);
+}
+
+.seller-details p.shop-desc {
+  color: var(--text);
+  font-size: 14.5px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  max-width: 500px;
+}
+
+.seller-details p.shop-meta {
+  color: var(--muted);
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seller-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+}
+
+.action-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+.action-btn.accent-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+
+.action-btn.accent-btn:hover {
+  background: var(--accent-dark);
+  color: white;
+}
+
+/* TABS SYSTEM */
+.seller-tabs-container {
+  max-width: 1000px;
+  margin: 0 auto 40px;
+}
+
+.tabs-header {
+  display: flex;
+  border-bottom: 1.5px solid var(--line);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.tab-link {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 12px 6px;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  border: none;
+  font-family: var(--font-serif);
+  outline: none;
+}
+
+.tab-link.active, .tab-link:hover {
+  color: var(--ink);
+}
+
+.tab-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+/* BROADCAST WALL STYLE */
+.broadcast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.broadcast-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+  max-width: 800px;
+}
+
+.broadcast-card:hover {
+  box-shadow: var(--shadow);
+}
+
+.broadcast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-bottom: 10px;
+}
+
+.broadcast-badge {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.broadcast-body {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+/* FLOATING CHAT WIDGET */
+.chat-drawer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 360px;
+  height: 480px;
+  max-height: 80vh;
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chat-drawer.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chat-header {
+  padding: 16px 20px;
+  background: var(--ink);
+  color: var(--on-ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.close-chat-btn {
+  background: transparent;
+  border: none;
+  color: var(--panel-dark-muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.close-chat-btn:hover {
+  color: white;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-bubble.sent {
+  align-self: flex-end;
+  background: var(--accent);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.received {
+  align-self: flex-start;
+  background: var(--surface-2);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+  border: 1px solid var(--line);
+}
+
+.chat-bubble-time {
+  font-size: 10px;
+  color: rgba(0,0,0,0.3);
+  margin-top: 4px;
+  text-align: right;
+  display: block;
+}
+.chat-bubble.sent .chat-bubble-time {
+  color: rgba(255,255,255,0.7);
+}
+
+.chat-input-area {
+  padding: 12px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.chat-input-area input:focus {
+  border-color: var(--accent);
+}
+
+.chat-input-area button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  font: inherit;
+}
+
+.chat-input-area button:hover {
+  background: var(--accent-dark);
+}
+</style>
+<script src="theme.js?v=5"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+    <a class="brand" href="index.html">CraftNext</a>
+
+    <div class="nav-links">
+        <a href="index.html">← Home</a>
+        <span id="navUser"></span>
+    </div>
+</header>
+
+
+<section style="padding: 0 clamp(20px, 8vw, 8%); max-width: var(--maxw); margin: auto;">
+
+  <!-- SELLER CARD -->
+  <div class="seller-header-card">
+    <div class="seller-profile-info">
+      <img id="sellerAvatar" class="seller-avatar" src="" onerror="this.src='Images/placeholder.svg'">
+      <div class="seller-details">
+        <h2 id="sellerShopName">Shop Name</h2>
+        <p id="sellerName" style="color: var(--muted); font-size: 14px; font-weight: 500; margin-bottom: 8px;">By Seller Name</p>
+        <p id="sellerDesc" class="shop-desc">Shop Description</p>
+        <p class="shop-meta">
+          <span>📍 <strong id="sellerLocation">Location</strong></span>
+          <span>·</span>
+          <span>👥 <strong id="followerCount">0</strong> Followers</span>
+        </p>
+      </div>
+    </div>
+    
+    <div class="seller-actions">
+      <button id="followBtn" class="action-btn" onclick="handleFollow()">Follow</button>
+      <button class="action-btn" onclick="toggleChat(true)">💬 Message Shop</button>
+      <button class="action-btn" onclick="handleShare()">🔗 Share Shop</button>
+    </div>
+  </div>
+
+  <!-- TABS SYSTEM -->
+  <div class="seller-tabs-container">
+    <div class="tabs-header">
+      <button class="tab-link active" onclick="showTab('artworks')">Artworks</button>
+      <button class="tab-link" onclick="showTab('broadcasts')">Shop Updates</button>
+    </div>
+    
+    <div id="tabPanel-artworks" class="tab-content-panel">
+      <div class="product-grid" id="sellerProducts"></div>
+    </div>
+    
+    <div id="tabPanel-broadcasts" class="tab-content-panel" style="display:none">
+      <div class="broadcast-list" id="broadcastWall"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FLOATING CART -->
+<div class="floating-cart" onclick="location.href='cart.html'">
+ <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/><circle cx="9.5" cy="20" r="1.4"/><circle cx="17.5" cy="20" r="1.4"/></svg>
+ <span id="cartCount">0</span>
+</div>
+
+<!-- CHAT WIDGET DRAWER -->
+<div class="chat-drawer" id="chatDrawer">
+  <div class="chat-header">
+    <h4 id="chatHeaderName">Chat with Shop</h4>
+    <button class="close-chat-btn" onclick="toggleChat(false)">&times;</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendChatMessage()">
+    <button onclick="sendChatMessage()">Send</button>
+  </div>
+</div>
+
+
+<script>window.CRAFTNEXT_API_ORIGIN = "https://six-sem-project-jb3i.onrender.com";</script>
+<script src="api.js?v=5"></script>
+<script src="script.js?v=5"></script>
+
+
+<script>
+
+/* ================= NAVBAR AUTH ================= */
+
+const navUser = document.getElementById("navUser");
+
+const user = getUser(); // guarded parse from api.js
+
+if(user){
+
+navUser.innerHTML = `
+<span style="margin-left:10px;">Hi, ${user.name}</span>
+${user.role === "admin" ? '<a href="admin.html" style="margin-left:10px;">Admin Panel</a>' : ""}
+<a href="#" id="logoutBtn" style="margin-left:10px;">Logout</a>
+`;
+
+document.getElementById("logoutBtn").onclick = function(e){
+e.preventDefault();
+Auth.logout();
+};
+
+}else{
+
+navUser.innerHTML = `
+<a href="login.html" style="margin-left:10px;">Login</a>
+`;
+
+}
+
+
+/* ================= GET SELLER FROM URL & LOAD DATA ================= */
+
+const params = new URLSearchParams(location.search);
+const sellerId = params.get("seller");
+
+if (!sellerId) {
+  document.body.innerHTML = "<h2 style='padding:40px'>Seller not found</h2>";
+  throw new Error("Invalid seller");
+}
+
+let sellerObj = null;
+let chatHistoryTimer = null;
+
+async function loadSellerInfo() {
+  try {
+    sellerObj = await Auth.getSeller(sellerId);
+    
+    document.getElementById("sellerAvatar").src = sellerObj.avatar ? imgUrl(sellerObj.avatar) : "Images/placeholder.svg";
+    document.getElementById("sellerShopName").innerText = sellerObj.shopName || sellerObj.name;
+    document.getElementById("sellerName").innerText = `By ${sellerObj.name}`;
+    document.getElementById("sellerDesc").innerText = sellerObj.shopDescription || "Specialized in handcrafting unique works.";
+    document.getElementById("sellerLocation").innerText = sellerObj.location || "India";
+    
+    // Follower count
+    const followers = sellerObj.followers || [];
+    document.getElementById("followerCount").innerText = followers.length;
+    
+    // Follow button active state
+    const followBtn = document.getElementById("followBtn");
+    const isFollowing = user && followers.includes(user._id);
+    followBtn.innerText = isFollowing ? "Following" : "Follow";
+    if (isFollowing) {
+      followBtn.classList.add("accent-btn");
+    } else {
+      followBtn.classList.remove("accent-btn");
+    }
+
+    // Broadcasts rendering
+    renderBroadcasts(sellerObj.broadcasts || []);
+
+  } catch (err) {
+    console.error("Failed to load seller info:", err);
+  }
+}
+
+function renderBroadcasts(broadcasts) {
+  const wall = document.getElementById("broadcastWall");
+  if (!broadcasts || !broadcasts.length) {
+    wall.innerHTML = `<div class="empty-state" style="padding:40px; text-align:center"><h3>No updates published yet</h3></div>`;
+    return;
+  }
+  wall.innerHTML = broadcasts.map(b => `
+    <div class="broadcast-card">
+      <div class="broadcast-header">
+        <span class="broadcast-badge">Announcement</span>
+        <span>${new Date(b.createdAt).toLocaleDateString("en-IN", { dateStyle: "medium" })}</span>
+      </div>
+      <div class="broadcast-body">${esc(b.message)}</div>
+    </div>
+  `).join("");
+}
+
+async function handleFollow() {
+  if (!user) {
+    showToast("Please login to follow this shop", "error");
+    setTimeout(() => { location.href = "login.html"; }, 1000);
+    return;
+  }
+  try {
+    const res = await Auth.followSeller(sellerId);
+    document.getElementById("followerCount").innerText = res.followersCount;
+    const followBtn = document.getElementById("followBtn");
+    followBtn.innerText = res.following ? "Following" : "Follow";
+    if (res.following) {
+      followBtn.classList.add("accent-btn");
+      showToast("Shop followed!", "success");
+    } else {
+      followBtn.classList.remove("accent-btn");
+      showToast("Unfollowed shop", "info");
+    }
+  } catch (err) {
+    showToast(err.message || "Failed to toggle follow", "error");
+  }
+}
+
+function handleShare() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast("Shop link copied to clipboard!", "success");
+  }).catch(() => {
+    showToast("Failed to copy link", "error");
+  });
+}
+
+/* ================= CHAT DRAWER LOGIC ================= */
+
+function toggleChat(show) {
+  if (show && !user) {
+    showToast("Please login to chat with the seller", "error");
+    setTimeout(() => { location.href = "login.html"; }, 1000);
+    return;
+  }
+
+  const drawer = document.getElementById("chatDrawer");
+  if (show) {
+    drawer.classList.add("open");
+    loadChatHistory();
+    if (!chatHistoryTimer) {
+      chatHistoryTimer = setInterval(loadChatHistory, 3000);
+    }
+  } else {
+    drawer.classList.remove("open");
+    if (chatHistoryTimer) {
+      clearInterval(chatHistoryTimer);
+      chatHistoryTimer = null;
+    }
+  }
+}
+
+async function loadChatHistory() {
+  try {
+    const messages = await Messages.getHistory(sellerId);
+    const box = document.getElementById("chatMessages");
+    const atBottom = box.scrollHeight - box.scrollTop <= box.clientHeight + 40;
+
+    box.innerHTML = messages.map(m => {
+      const isSent = m.sender === user._id || (m.sender._id && m.sender._id === user._id);
+      const timeStr = new Date(m.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      return `
+        <div class="chat-bubble ${isSent ? "sent" : "received"}">
+          <div>${esc(m.content)}</div>
+          <span class="chat-bubble-time">${timeStr}</span>
+        </div>
+      `;
+    }).join("");
+
+    if (atBottom || box.scrollTop === 0) {
+      box.scrollTop = box.scrollHeight;
+    }
+  } catch (err) {
+    console.error("Failed to load chat history:", err);
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  try {
+    await Messages.send(sellerId, text);
+    input.value = "";
+    loadChatHistory();
+  } catch (err) {
+    showToast("Could not send message", "error");
+  }
+}
+
+/* ================= TABS SWITCHING ================= */
+
+function showTab(tabName) {
+  document.querySelectorAll(".tab-content-panel").forEach(p => p.style.display = "none");
+  document.querySelectorAll(".tab-link").forEach(b => b.classList.remove("active"));
+  
+  document.getElementById(`tabPanel-${tabName}`).style.display = "block";
+  event.target.classList.add("active");
+}
+
+
+// PAGE INITIALIZATION
+(async () => {
+  await loadSellerInfo();
+  
+  if (sellerObj) {
+    document.getElementById("chatHeaderName").innerText = `Chat with ${sellerObj.shopName || sellerObj.name}`;
+  }
+
+  if (params.get("openChat") === "true") {
+    toggleChat(true);
+  }
+
+  const box = document.getElementById("sellerProducts");
+  box.innerHTML = `<p style="padding:20px;color:#888">Loading artworks…</p>`;
+  
+  try {
+    const list = await Products.getAll({ seller: sellerId });
+    cacheProducts(list);
+
+    if (!list.length) {
+      box.innerHTML = `<div class="empty-state" style="grid-column:1/-1; padding:40px; text-align:center"><h3>No products found from this seller</h3></div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+    list.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = productCardHTML(p);
+      box.appendChild(card);
+    });
+    renderWishlistIcons();
+  } catch (err) {
+    box.innerHTML = `<div class="empty-state" style="grid-column:1/-1; padding:40px; text-align:center"><p>Could not load this seller's artworks.</p></div>`;
+  }
+})();
+
+</script>
+
+</body>
+</html>
