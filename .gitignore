@@ -18,3 +18,7 @@ Thumbs.db
 # JARVIS personal-data exports — never commit financial backups (ORD-1508a)
 jarvis-backup-*.json
 jarvis/*.backup.json
+
+# Large media
+video/
+
