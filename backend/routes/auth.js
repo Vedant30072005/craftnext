@@ -370,6 +370,65 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+// @POST /api/auth/forgot-password-otp
+// Primary OTP-based flow: sends a 6-digit OTP to the user's email so they can
+// reset their password entirely in-page, without waiting for an email link.
+router.post("/forgot-password-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // Same safe message — no account enumeration
+      return res.json({ message: "If that email is registered, an OTP has been sent." });
+    }
+
+    if (!user.isVerified) {
+      return res.status(400).json({ message: "This account hasn't been verified yet. Please register again." });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
+    await user.save();
+
+    try {
+      await sendOTPEmail(email, otp);
+    } catch (mailErr) {
+      console.warn("Reset OTP email failed, OTP:", otp, mailErr.message);
+    }
+
+    res.json({ message: "If that email is registered, an OTP has been sent." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// @POST /api/auth/reset-password-otp
+// Verifies the OTP and sets the new password in one step.
+router.post("/reset-password-otp", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user || user.otp !== otp || !user.otpExpiry || user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    user.password = newPassword; // hashed by pre-save hook
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save();
+
+    res.json({ message: "Password reset successfully. Please sign in." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // @POST /api/auth/logout - clear cookie
 router.post("/logout", (req, res) => {
   res.clearCookie("cn_token");

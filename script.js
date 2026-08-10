@@ -568,7 +568,7 @@ function initAssistantWidget() {
 
         // 2. Links: [text](url)
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
-            if (/^(product\.html\?id=[a-zA-Z0-9_-]+|index\.html|cart\.html|contact\.html|Collection\.html)$/.test(url)) {
+            if (/^(product\.html\?id=[a-zA-Z0-9_-]+|index\.html|cart\.html|contact\.html|collection\.html)$/.test(url)) {
                 return `<a href="${url}" style="color:var(--accent);font-weight:600;text-decoration:underline;">${linkText}</a>`;
             }
             return match;

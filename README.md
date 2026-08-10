@@ -54,7 +54,7 @@ revenue. Installable as a PWA, covered by an automated API test suite.
 
 ```
 6-sem-project/
-├── index.html, product.html, Collection.html, cart.html,
+├── index.html, product.html, collection.html, cart.html,
 │   wishlist.html, checkout.html, login.html, profile.html,
 │   sell.html, seller.html, seller-dashboard.html, admin.html,
 │   about/contact/terms/privacy/shipping-returns.html, 404.html

@@ -329,6 +329,11 @@
         </div>
       </div>
 
+      <div class="form-group" id="newPasswordGroup" style="display:none">
+        <label>New Password</label>
+        <input type="password" id="newPasswordInput" placeholder="Minimum 6 characters">
+      </div>
+
       <div class="forgot-link" id="forgotLink">
         <a onclick="enterForgotMode()">Forgot password?</a>
       </div>
@@ -387,8 +392,9 @@ let pendingResetToken = "";
 // so no leftover data (someone else's email/password, a half-typed shop
 // name) ever carries over to what the user is about to do next.
 function clearFormFields() {
-  ["nameInput", "emailInput", "passwordInput", "shopNameInput", "locationInput", "phoneInput", "shopDescInput"].forEach(id => {
-    document.getElementById(id).value = "";
+  ["nameInput", "emailInput", "passwordInput", "newPasswordInput", "otpInput", "shopNameInput", "locationInput", "phoneInput", "shopDescInput"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
   });
 }
 
@@ -462,17 +468,31 @@ function clearMessages() {
 function enterForgotMode() {
   mode = "forgot";
   document.getElementById("authTitle").textContent = "Reset Password";
-  document.getElementById("authSubtitle").textContent = "Enter your email and we'll send you a reset link";
+  document.getElementById("authSubtitle").textContent = "Enter your email and we'll send you an OTP";
   document.getElementById("roleTabs").style.display = "none";
   document.getElementById("nameGroup").style.display = "none";
   document.getElementById("passwordGroup").style.display = "none";
   document.getElementById("otpGroup").style.display = "none";
+  document.getElementById("newPasswordGroup").style.display = "none";
   document.getElementById("sellerFields").classList.remove("show");
   document.getElementById("forgotLink").style.display = "none";
   document.getElementById("backToLoginLink").style.display = "block";
   document.getElementById("toggleDivider").style.display = "none";
   document.getElementById("authToggle").style.display = "none";
-  document.getElementById("submitBtn").textContent = "Send Reset Link";
+  document.getElementById("submitBtn").textContent = "Send OTP";
+  clearMessages();
+}
+
+function enterForgotOTPMode(email) {
+  mode = "forgotOTP";
+  pendingEmail = email;
+  document.getElementById("authTitle").textContent = "Enter OTP & New Password";
+  document.getElementById("authSubtitle").textContent = "Check your email for the 6-digit code";
+  document.getElementById("emailInput").closest(".form-group").style.display = "none";
+  document.getElementById("otpGroup").style.display = "block";
+  document.getElementById("otpHelper").style.display = "block";
+  document.getElementById("newPasswordGroup").style.display = "block";
+  document.getElementById("submitBtn").textContent = "Reset Password";
   clearMessages();
 }
 
@@ -512,6 +532,8 @@ function backToLogin() {
   document.getElementById("emailInput").value = "";
   document.getElementById("passwordGroup").style.display = "block";
   document.getElementById("passwordInput").placeholder = "Minimum 6 characters";
+  document.getElementById("otpGroup").style.display = "none";
+  document.getElementById("newPasswordGroup").style.display = "none";
   document.getElementById("forgotLink").style.display = "block";
   document.getElementById("backToLoginLink").style.display = "none";
   document.getElementById("toggleDivider").style.display = "flex";
@@ -535,7 +557,13 @@ async function resendOTP() {
   btn.disabled = true;
   btn.textContent = "Sending...";
   try {
-    await apiRequest("/auth/resend-otp", "POST", { email: pendingEmail });
+    if (mode === "forgotOTP") {
+      // Password reset flow — use the forgot-password-otp endpoint
+      await Auth.forgotPasswordOTP(pendingEmail);
+    } else {
+      // Registration verification flow
+      await apiRequest("/auth/resend-otp", "POST", { email: pendingEmail });
+    }
     showSuccess("New OTP sent to your email.");
   } catch (err) {
     showError(err.message || "Failed to resend OTP.");
@@ -561,16 +589,39 @@ async function handleSubmit(e) {
     const email = document.getElementById("emailInput").value.trim();
     if (!email) { showError("Please enter your email."); return; }
     const btn = document.getElementById("submitBtn");
-    btn.innerHTML = `<span class="spinner"></span> Sending...`;
+    btn.innerHTML = `<span class="spinner"></span> Sending OTP...`;
     btn.disabled = true;
     try {
-      const res = await Auth.forgotPassword(email);
-      showSuccess(res.message || "If that email is registered, a reset link has been sent.");
+      // Primary: OTP-based reset (works even if email link delivery is flaky)
+      await Auth.forgotPasswordOTP(email);
+      // Also fire the email-link version as a fallback (fire-and-forget)
+      Auth.forgotPassword(email).catch(() => {});
+      showSuccess("OTP sent! Check your email.");
+      enterForgotOTPMode(email);
     } catch (err) {
       showError(err.message || "Something went wrong.");
-    } finally {
       btn.disabled = false;
-      btn.textContent = "Send Reset Link";
+      btn.textContent = "Send OTP";
+    }
+    return;
+  }
+
+  if (mode === "forgotOTP") {
+    const otp = document.getElementById("otpInput").value.trim();
+    const newPassword = document.getElementById("newPasswordInput").value;
+    if (!otp || otp.length !== 6) { showError("Please enter the 6-digit OTP."); return; }
+    if (!newPassword || newPassword.length < 6) { showError("Password must be at least 6 characters."); return; }
+    const btn = document.getElementById("submitBtn");
+    btn.innerHTML = `<span class="spinner"></span> Resetting...`;
+    btn.disabled = true;
+    try {
+      await Auth.resetPasswordOTP(pendingEmail, otp, newPassword);
+      showSuccess("Password reset! Redirecting to sign in...");
+      setTimeout(backToLogin, 1500);
+    } catch (err) {
+      showError(err.message || "Invalid or expired OTP.");
+      btn.disabled = false;
+      btn.textContent = "Reset Password";
     }
     return;
   }

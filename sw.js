@@ -7,7 +7,7 @@ const CACHE = "craftnext-v2";
 
 const SHELL = [
   "index.html",
-  "Collection.html",
+  "collection.html",
   "404.html",
   "style.css?v=5",
   "script.js?v=5",
