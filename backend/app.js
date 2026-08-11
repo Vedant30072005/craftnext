@@ -88,18 +88,36 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Applies a limiter only to POST requests, leaving GET browsing unrestricted.
 const postOnly = (limiter) => (req, res, next) => (req.method === "POST" ? limiter(req, res, next) : next());
 
-// Routes
-app.use("/api/auth", authLimiter, require("./routes/auth"));
-app.use("/api/products", postOnly(writeLimiter), require("./routes/products"));
-app.use("/api/orders", postOnly(writeLimiter), require("./routes/orders"));
-app.use("/api/admin", require("./routes/admin"));
-app.use("/api/coupons", require("./routes/coupons").router);
-app.use("/api/newsletter", require("./routes/newsletter"));
-app.use("/api/chat", chatLimiter, require("./routes/chat"));
-app.use("/api/messages", require("./routes/messages"));
+// Routes (both /api/* and /* aliases for serverless & local proxy flexibility)
+const authRouter = require("./routes/auth");
+const productRouter = require("./routes/products");
+const orderRouter = require("./routes/orders");
+const adminRouter = require("./routes/admin");
+const couponRouter = require("./routes/coupons").router;
+const newsletterRouter = require("./routes/newsletter");
+const chatRouter = require("./routes/chat");
+const messageRouter = require("./routes/messages");
+
+app.use("/api/auth", authLimiter, authRouter);
+app.use("/api/products", postOnly(writeLimiter), productRouter);
+app.use("/api/orders", postOnly(writeLimiter), orderRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/coupons", couponRouter);
+app.use("/api/newsletter", newsletterRouter);
+app.use("/api/chat", chatLimiter, chatRouter);
+app.use("/api/messages", messageRouter);
+
+app.use("/auth", authLimiter, authRouter);
+app.use("/products", postOnly(writeLimiter), productRouter);
+app.use("/orders", postOnly(writeLimiter), orderRouter);
+app.use("/admin", adminRouter);
+app.use("/coupons", couponRouter);
+app.use("/newsletter", newsletterRouter);
+app.use("/chat", chatLimiter, chatRouter);
+app.use("/messages", messageRouter);
 
 // Health check
-app.get("/api/health", (req, res) => {
+app.get(["/api/health", "/health", "/api"], (req, res) => {
   res.json({ status: "CraftNext API is running 🎨", timestamp: new Date() });
 });
 
