@@ -24,6 +24,14 @@ const SELLER = {
   isVerified: true,
 };
 
+const ADMIN = {
+  name: "CraftNext Admin",
+  email: process.env.SEED_ADMIN_EMAIL || "admin@craftnext.com",
+  password: process.env.SEED_ADMIN_PASSWORD || "admin123",
+  role: "admin",
+  isVerified: true,
+};
+
 const PRODUCTS = [
   {
     name: "Krishna Painting",
@@ -84,6 +92,15 @@ const PRODUCTS = [
       console.log(`👤 Seller created: ${seller.email}  (password: ${SELLER.password})`);
     } else {
       console.log(`👤 Seller already exists: ${seller.email}`);
+    }
+
+    // Admin — created via .create() so the password gets hashed by the pre-save hook
+    let admin = await User.findOne({ role: "admin" });
+    if (!admin) {
+      admin = await User.create(ADMIN);
+      console.log(`👑 Admin created: ${admin.email}  (password: ${ADMIN.password})`);
+    } else {
+      console.log(`👑 Admin already exists: ${admin.email}`);
     }
 
     for (const p of PRODUCTS) {
