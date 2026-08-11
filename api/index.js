@@ -17,6 +17,21 @@ async function connectDB() {
   try {
     await mongoose.connect(mongoUri);
     isConnected = true;
+    
+    // Auto-seed admin/seller if database is fresh/empty
+    const User = require("../backend/models/User");
+    const adminExists = await User.findOne({ role: "admin" });
+    if (!adminExists) {
+      await User.create({
+        name: "CraftNext Admin",
+        email: "admin@craftnext.com",
+        password: "admin123",
+        role: "admin",
+        isVerified: true,
+        isActive: true,
+      });
+      console.log("👑 Auto-seeded default admin: admin@craftnext.com / admin123");
+    }
   } catch (err) {
     console.error("Vercel Serverless Mongo Connection Error:", err.message);
   }
