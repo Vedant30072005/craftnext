@@ -2,6 +2,10 @@
    Vercel Serverless Entrypoint for CraftNext API
    ============================================= */
 
+const path = require("path");
+if (!module.paths.includes(path.join(__dirname, "../backend/node_modules"))) {
+  module.paths.push(path.join(__dirname, "../backend/node_modules"));
+}
 const app = require("../backend/app");
 const mongoose = require("mongoose");
 
@@ -39,5 +43,8 @@ async function connectDB() {
 
 module.exports = async (req, res) => {
   await connectDB();
+  if (req.url && !req.url.startsWith("/api")) {
+    req.url = "/api" + (req.url.startsWith("/") ? "" : "/") + req.url;
+  }
   return app(req, res);
 };

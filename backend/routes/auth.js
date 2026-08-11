@@ -100,19 +100,31 @@ router.post("/register", [
     otpExpiry: Date.now() + 5 * 60 * 1000, // 5 min
     isVerified: false,
     });
-    // Send OTP email (falls back to console.log if email not configured)
+    // Send OTP email (falls back to console logging & devOtp if mailer fails)
+    let mailSent = true;
+    let mailError = null;
     try {
       await sendOTPEmail(email, otp);
+      console.log(`\n========================================\n📧 [EMAIL SENT] OTP ${otp} sent to ${email}\n========================================\n`);
     } catch (mailErr) {
-      console.warn("Email send failed, OTP:", otp, mailErr.message);
+      mailSent = false;
+      mailError = mailErr.message;
+      console.warn(`\n========================================\n🔑 [TESTING / DEV OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
     }
+
+    const resMsg = mailSent
+      ? "OTP sent to your email. Please verify."
+      : `Email dispatch failed (${mailError}). Dev OTP: ${otp}`;
+
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
       shopName: user.shopName,
-      message: "OTP sent to email. Please verify.",
+      mailSent,
+      devOtp: otp,
+      message: resMsg,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -300,13 +312,22 @@ router.post("/resend-otp", async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000;
     await user.save();
 
+    let mailSent = true;
+    let mailError = null;
     try {
       await sendOTPEmail(email, otp);
+      console.log(`\n========================================\n📧 [EMAIL RESENT] OTP ${otp} sent to ${email}\n========================================\n`);
     } catch (mailErr) {
-      console.warn("Email send failed, OTP:", otp, mailErr.message);
+      mailSent = false;
+      mailError = mailErr.message;
+      console.warn(`\n========================================\n🔑 [TESTING / DEV OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
     }
 
-    res.json({ message: "OTP resent to email" });
+    const resMsg = mailSent
+      ? "OTP resent to email"
+      : `Email dispatch failed (${mailError}). New Dev OTP: ${otp}`;
+
+    res.json({ message: resMsg, mailSent, devOtp: otp });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -392,13 +413,22 @@ router.post("/forgot-password-otp", async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
     await user.save();
 
+    let mailSent = true;
+    let mailError = null;
     try {
       await sendOTPEmail(email, otp);
+      console.log(`\n========================================\n📧 [RESET EMAIL SENT] OTP ${otp} sent to ${email}\n========================================\n`);
     } catch (mailErr) {
-      console.warn("Reset OTP email failed, OTP:", otp, mailErr.message);
+      mailSent = false;
+      mailError = mailErr.message;
+      console.warn(`\n========================================\n🔑 [TESTING / DEV RESET OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
     }
 
-    res.json({ message: "If that email is registered, an OTP has been sent." });
+    const resMsg = mailSent
+      ? "If that email is registered, an OTP has been sent."
+      : `Email dispatch failed (${mailError}). Dev OTP: ${otp}`;
+
+    res.json({ message: resMsg, mailSent, devOtp: otp });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

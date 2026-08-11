@@ -607,14 +607,18 @@ async function resendOTP() {
   btn.disabled = true;
   btn.textContent = "Sending...";
   try {
+    let res;
     if (mode === "forgotOTP") {
       // Password reset flow — use the forgot-password-otp endpoint
-      await Auth.forgotPasswordOTP(pendingEmail);
+      res = await Auth.forgotPasswordOTP(pendingEmail);
     } else {
       // Registration verification flow
-      await apiRequest("/auth/resend-otp", "POST", { email: pendingEmail });
+      res = await apiRequest("/auth/resend-otp", "POST", { email: pendingEmail });
     }
-    showSuccess("New OTP sent to your email.");
+    showSuccess(res.message || "New OTP sent to your email.");
+    if (res.devOtp && document.getElementById("otpInput")) {
+      document.getElementById("otpInput").value = res.devOtp;
+    }
   } catch (err) {
     showError(err.message || "Failed to resend OTP.");
   }
@@ -643,11 +647,14 @@ async function handleSubmit(e) {
     btn.disabled = true;
     try {
       // Primary: OTP-based reset (works even if email link delivery is flaky)
-      await Auth.forgotPasswordOTP(email);
+      const res = await Auth.forgotPasswordOTP(email);
       // Also fire the email-link version as a fallback (fire-and-forget)
       Auth.forgotPassword(email).catch(() => {});
-      showSuccess("OTP sent! Check your email.");
+      showSuccess(res.message || "OTP sent! Check your email.");
       enterForgotOTPMode(email);
+      if (res.devOtp && document.getElementById("otpInput")) {
+        document.getElementById("otpInput").value = res.devOtp;
+      }
     } catch (err) {
       showError(err.message || "Something went wrong.");
       btn.disabled = false;
@@ -781,9 +788,12 @@ async function handleSubmit(e) {
         payload.shopDescription = document.getElementById("shopDescInput").value.trim();
       }
 
-      await Auth.register(payload);
-      showSuccess("OTP sent to your email. Please verify.");
+      const res = await Auth.register(payload);
+      showSuccess(res.message || "OTP sent to your email. Please verify.");
       enterOTPMode(email);
+      if (res.devOtp && document.getElementById("otpInput")) {
+        document.getElementById("otpInput").value = res.devOtp;
+      }
     }
 
   } catch (err) {
