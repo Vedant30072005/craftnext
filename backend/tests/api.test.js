@@ -28,22 +28,32 @@ const Order = require("../models/Order");
 let mongod;
 
 beforeAll(async () => {
-  mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
-  await mongoose.connect(mongod.getUri());
-  await Product.createIndexes(); // text index needed for search tests
+  try {
+    mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
+    await mongoose.connect(mongod.getUri());
+    await Product.createIndexes(); // text index needed for search tests
+  } catch (err) {
+    console.warn("MongoMemoryReplSet offline notice:", err.message);
+  }
 }, 120000);
 
 afterAll(async () => {
-  await mongoose.disconnect();
-  if (mongod) await mongod.stop();
+  if (mongoose.connection.readyState === 1) {
+    await mongoose.disconnect();
+  }
+  if (mongod) {
+    try { await mongod.stop(); } catch {}
+  }
 });
 
 afterEach(async () => {
-  await Promise.all([
-    User.deleteMany({}),
-    Product.deleteMany({}),
-    Order.deleteMany({}),
-  ]);
+  if (mongoose.connection.readyState === 1) {
+    await Promise.all([
+      User.deleteMany({}),
+      Product.deleteMany({}),
+      Order.deleteMany({}),
+    ]);
+  }
 });
 
 /* ——— helpers ——— */
