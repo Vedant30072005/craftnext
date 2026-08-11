@@ -12,17 +12,16 @@ const mongoose = require("mongoose");
 let isConnected = false;
 
 async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) return;
+  if (mongoose.connection.readyState >= 1) return;
   const mongoUri = process.env.MONGO_URI;
   if (!mongoUri) {
-    console.warn("MONGO_URI environment variable not configured.");
-    return;
+    throw new Error("MONGO_URI environment variable is not configured in Vercel settings.");
   }
+  await mongoose.connect(mongoUri, {
+    serverSelectionTimeoutMS: 5000,
+  });
+  
   try {
-    await mongoose.connect(mongoUri);
-    isConnected = true;
-    
-    // Auto-seed admin/seller if database is fresh/empty
     const User = require("../backend/models/User");
     const adminExists = await User.findOne({ role: "admin" });
     if (!adminExists) {
@@ -34,10 +33,9 @@ async function connectDB() {
         isVerified: true,
         isActive: true,
       });
-      console.log("👑 Auto-seeded default admin: admin@craftnext.com / admin123");
     }
-  } catch (err) {
-    console.error("Vercel Serverless Mongo Connection Error:", err.message);
+  } catch (seedErr) {
+    console.warn("Auto-seed notice:", seedErr.message);
   }
 }
 
