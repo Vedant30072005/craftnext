@@ -732,16 +732,17 @@ async function handleSubmit(e) {
   const password = document.getElementById("passwordInput").value;
 
   // Safety timeout: if the backend hangs (e.g. email transport stuck),
-  // restore the button after 20 seconds so the user isn't stuck forever.
+  // restore the button after 60 seconds so the user isn't stuck forever.
+  // (Render free tier cold starts can take 50+ seconds)
   const safetyTimer = setTimeout(() => {
     if (btn.disabled) {
       btn.disabled = false;
       if (mode === "login") btn.textContent = "Sign In";
       else if (mode === "register") btn.textContent = "Create Account";
       else btn.textContent = "Verify OTP";
-      showError("Request timed out. Please check your connection and try again.");
+      showError("Request timed out. The server may be waking up — please try again.");
     }
-  }, 20000);
+  }, 60000);
 
   try {
     if (mode === "login") {
