@@ -22,3 +22,7 @@ jarvis/*.backup.json
 # Large media
 video/
 
+# IDE
+.vscode/
+
+

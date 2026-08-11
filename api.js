@@ -68,7 +68,22 @@ async function apiRequest(endpoint, method = "GET", body = null, auth = false) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const res = await fetch(API_BASE + endpoint, options);
+  let res;
+  try {
+    res = await fetch(API_BASE + endpoint, options);
+  } catch (err) {
+    const fallbackBase = window.location.origin + "/api";
+    if (API_BASE !== fallbackBase && !["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+      try {
+        res = await fetch(fallbackBase + endpoint, options);
+      } catch (fallbackErr) {
+        throw new Error("Unable to connect to server. Please check your internet connection or backend server.");
+      }
+    } else {
+      throw new Error("Unable to connect to server. Please check your internet connection or backend server.");
+    }
+  }
+
   // A dead backend / proxy can answer with HTML or an empty body —
   // fall back to a clean error object instead of a JSON SyntaxError.
   const data = await res.json().catch(() => ({ message: `Server error (${res.status})` }));
