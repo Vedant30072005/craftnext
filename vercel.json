@@ -1,9 +1,3 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js?__url=/api/$1"
-    }
-  ]
+  "cleanUrls": true
 }

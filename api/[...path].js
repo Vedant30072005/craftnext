@@ -1,5 +1,5 @@
 /* =============================================
-   Vercel Serverless Entrypoint for /api
+   Vercel Serverless Catch-All Entrypoint for /api/*
    ============================================= */
 
 const app = require("../backend/app");
@@ -29,6 +29,19 @@ module.exports = async (req, res) => {
     await connectDB();
   } catch (err) {
     console.error("connectDB error:", err);
+  }
+
+  // Restore the original route from Vercel dynamic path parameter
+  if (req.query && req.query.path) {
+    const subpath = Array.isArray(req.query.path)
+      ? req.query.path.join("/")
+      : req.query.path;
+    
+    // Construct the full /api/... path while preserving other query params
+    const queryParams = { ...req.query };
+    delete queryParams.path;
+    const qs = new URLSearchParams(queryParams).toString();
+    req.url = "/api/" + subpath + (qs ? "?" + qs : "");
   }
 
   return app(req, res);
