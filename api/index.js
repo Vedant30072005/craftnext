@@ -1,5 +1,5 @@
 /* =============================================
-   Vercel Serverless Entrypoint for /api
+   Vercel Serverless Entrypoint for CraftNext API
    ============================================= */
 
 const app = require("../backend/app");
@@ -29,6 +29,13 @@ module.exports = async (req, res) => {
     await connectDB();
   } catch (err) {
     console.error("connectDB error:", err);
+  }
+
+  const matchedPath = req.headers["x-matched-path"] || req.headers["x-forwarded-uri"] || req.headers["x-now-route-matches"];
+  if (matchedPath && !matchedPath.includes("api/index")) {
+    req.url = matchedPath;
+  } else if (req.url && !req.url.startsWith("/api")) {
+    req.url = "/api" + (req.url.startsWith("/") ? "" : "/") + req.url;
   }
 
   return app(req, res);
