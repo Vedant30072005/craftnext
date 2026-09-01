@@ -926,6 +926,81 @@ html[data-theme="dark"] .table-toggle-badge.active-gallery:hover {
   color: #0d0c0b;
   border-color: #a855f7;
 }
+
+/* Quick Price Edit & Filter Tabs */
+.price-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.quick-price-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.quick-price-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--accent);
+}
+.inline-price-form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.inline-price-input {
+  width: 90px;
+  padding: 4px 8px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+.inline-price-btn {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.inline-price-save {
+  background: var(--ok);
+  color: white;
+  border-color: var(--ok);
+}
+.inline-price-save:hover {
+  background: #256b37;
+}
+.inline-price-cancel {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.inline-price-cancel:hover {
+  background: var(--line);
+}
+.price-flash-success {
+  animation: priceFlash 1.2s ease;
+}
+@keyframes priceFlash {
+  0% { background-color: var(--ok-soft); color: var(--ok); padding: 2px 6px; border-radius: 4px; }
+  100% { background-color: transparent; }
+}
 </style>
 <script src="theme.js?v=5"></script>
 </head>
@@ -1170,10 +1245,24 @@ html[data-theme="dark"] .table-toggle-badge.active-gallery:hover {
             <button type="button" id="productCancelBtn" class="form-btn-cancel" style="display:none" onclick="resetProductForm()">Cancel</button>
           </div>
         </form>
+      <div class="filter-tabs" style="flex-wrap: wrap;">
+        <button class="user-filter-tab active prod-cat-tab" onclick="filterProductsByCategory('all', this)">All Categories</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('spiritual', this)">Spiritual</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('clock', this)">Clock</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('lippan', this)">Lippan</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('diya', this)">Diya</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('zharokha', this)">Zharokha</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('toran', this)">Toran</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('pipe-cleaner', this)">Pipe Cleaner</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('puja-thali', this)">Puja Thali</button>
+        <button class="user-filter-tab prod-cat-tab" onclick="filterProductsByCategory('other', this)">Other</button>
       </div>
 
       <div class="data-table-wrapper">
-        <h3>Product Catalog</h3>
+        <h3>
+          Product Catalog & Prices
+          <input class="table-search" type="text" placeholder="Search products..." oninput="searchProducts(this.value)">
+        </h3>
         <table>
           <thead>
             <tr>
@@ -1611,6 +1700,82 @@ async function deleteUser(id) {
 /* ——— PRODUCTS ——— */
 let productsCache = {};
 let editingProductId = null;
+let currentProductCategory = "all";
+let currentProductSearch = "";
+let productSearchDebounce;
+
+function filterProductsByCategory(cat, btn) {
+  currentProductCategory = cat;
+  if (btn) {
+    document.querySelectorAll(".prod-cat-tab").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
+  }
+  loadProducts(1);
+}
+
+function searchProducts(q) {
+  currentProductSearch = q.trim();
+  clearTimeout(productSearchDebounce);
+  productSearchDebounce = setTimeout(() => loadProducts(1), 300);
+}
+
+function startQuickPriceEdit(id, currentPrice) {
+  const container = document.getElementById(`price-container-${id}`);
+  if (!container) return;
+  container.innerHTML = `
+    <div class="inline-price-form" id="inline-price-form-${id}">
+      <span style="font-weight:700;font-size:13px;color:var(--muted)">₹</span>
+      <input type="number" id="inline-price-input-${id}" class="inline-price-input" min="1" step="1" value="${currentPrice}" onkeydown="if(event.key==='Enter') saveQuickPrice('${id}'); if(event.key==='Escape') cancelQuickPrice('${id}', ${currentPrice});">
+      <button class="inline-price-btn inline-price-save" onclick="saveQuickPrice('${id}')" title="Save Price">✓</button>
+      <button class="inline-price-btn inline-price-cancel" onclick="cancelQuickPrice('${id}', ${currentPrice})" title="Cancel">✕</button>
+    </div>
+  `;
+  const input = document.getElementById(`inline-price-input-${id}`);
+  if (input) {
+    input.focus();
+    input.select();
+  }
+}
+
+function cancelQuickPrice(id, originalPrice) {
+  const container = document.getElementById(`price-container-${id}`);
+  if (!container) return;
+  container.innerHTML = `
+    <strong style="color:var(--text)">₹${originalPrice.toLocaleString("en-IN")}</strong>
+    <button class="quick-price-btn" onclick="startQuickPriceEdit('${id}', ${originalPrice})" title="Quick Edit Price">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      <span>Edit</span>
+    </button>
+  `;
+}
+
+async function saveQuickPrice(id) {
+  const input = document.getElementById(`inline-price-input-${id}`);
+  if (!input) return;
+  const newPrice = Number(input.value);
+  if (!newPrice || newPrice <= 0) {
+    alert("Price must be a valid number greater than 0");
+    return;
+  }
+
+  const container = document.getElementById(`price-container-${id}`);
+  try {
+    container.innerHTML = `<span style="font-size:12px;color:var(--muted)">Saving...</span>`;
+    await Products.update(id, { price: newPrice });
+    if (productsCache[id]) productsCache[id].price = newPrice;
+    container.innerHTML = `
+      <strong class="price-flash-success" style="color:var(--text)">₹${newPrice.toLocaleString("en-IN")}</strong>
+      <button class="quick-price-btn" onclick="startQuickPriceEdit('${id}', ${newPrice})" title="Quick Edit Price">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        <span>Edit</span>
+      </button>
+    `;
+  } catch (e) {
+    alert(e.message || "Failed to update price");
+    const oldPrice = productsCache[id]?.price || newPrice;
+    cancelQuickPrice(id, oldPrice);
+  }
+}
 
 async function loadProducts(page = 1) {
   // Swapping the table body for a one-row "Loading..." placeholder briefly
@@ -1619,10 +1784,14 @@ async function loadProducts(page = 1) {
   const scrollY = window.scrollY;
   document.getElementById("productsTableBody").innerHTML = `<tr><td colspan="9" class="loader">Loading...</td></tr>`;
   try {
-    const { items: products, page: p, pages } = await Admin.products({ page, limit: 20 });
+    const params = { page, limit: 20 };
+    if (currentProductCategory !== "all") params.category = currentProductCategory;
+    if (currentProductSearch) params.search = currentProductSearch;
+
+    const { items: products, page: p, pages } = await Admin.products(params);
     const tbody = document.getElementById("productsTableBody");
     if (!products.length) {
-      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><p>No products yet</p></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><p>No products match your criteria</p></div></td></tr>`;
       document.getElementById("productsPager").innerHTML = "";
       return;
     }
@@ -1640,7 +1809,15 @@ async function loadProducts(page = 1) {
           </td>
           <td><span style="color:var(--text);font-weight:500">${p.sellerName || "—"}</span></td>
           <td><span style="text-transform:capitalize;color:var(--muted)">${p.category}</span></td>
-          <td><strong style="color:var(--text)">₹${p.price.toLocaleString("en-IN")}</strong></td>
+          <td>
+            <div class="price-edit-container" id="price-container-${p._id}">
+              <strong style="color:var(--text)">₹${p.price.toLocaleString("en-IN")}</strong>
+              <button class="quick-price-btn" onclick="startQuickPriceEdit('${p._id}', ${p.price})" title="Quick Edit Price">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit</span>
+              </button>
+            </div>
+          </td>
           <td><span style="font-weight:500;color:var(--text)">${p.stock}</span></td>
           <td><span class="status-badge ${p.isActive ? "status-confirmed" : "status-cancelled"}">${p.isActive ? "Active" : "Inactive"}</span></td>
           <td>

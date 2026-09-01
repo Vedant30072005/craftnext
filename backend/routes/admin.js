@@ -239,12 +239,23 @@ router.delete("/orders/:id", async (req, res) => {
 // @GET /api/admin/products
 router.get("/products", async (req, res) => {
   try {
+    const { category, search } = req.query;
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
 
+    const filter = {};
+    if (category && category !== "all") filter.category = category;
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { sellerName: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
+    }
+
     const [products, total] = await Promise.all([
-      Product.find().sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
-      Product.countDocuments(),
+      Product.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+      Product.countDocuments(filter),
     ]);
 
     res.json({ items: products, total, page, pages: Math.max(1, Math.ceil(total / limit)) });
