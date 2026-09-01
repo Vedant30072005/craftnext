@@ -31,9 +31,23 @@ module.exports = async (req, res) => {
     console.error("connectDB error:", err);
   }
 
-  const matchedPath = req.headers["x-matched-path"] || req.headers["x-forwarded-uri"] || req.headers["x-now-route-matches"];
-  if (matchedPath && !matchedPath.includes("api/index")) {
-    req.url = matchedPath;
+  // Restore the original requested URL from Vercel rewrite parameter or headers
+  try {
+    const rawUrl = req.url || "/";
+    const parsed = new URL(rawUrl, "http://localhost");
+    if (parsed.searchParams.has("__url")) {
+      const targetPath = parsed.searchParams.get("__url");
+      parsed.searchParams.delete("__url");
+      const remainingQuery = parsed.searchParams.toString();
+      req.url = targetPath + (remainingQuery ? "?" + remainingQuery : "");
+    } else {
+      const matched = req.headers["x-matched-path"] || req.headers["x-forwarded-uri"];
+      if (matched && !matched.includes("api/index")) {
+        req.url = matched;
+      }
+    }
+  } catch (e) {
+    console.error("URL resolution error:", e);
   }
 
   return app(req, res);
