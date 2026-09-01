@@ -122,8 +122,30 @@ app.get(["/api/health", "/health", "/api"], (req, res) => {
   res.json({ status: "CraftNext API is running 🎨", timestamp: new Date() });
 });
 
-// 404 handler
+// Serve static frontend files (HTML, CSS, JS, Images) from project root
+app.use(express.static(path.join(__dirname, ".."), {
+  extensions: ["html"]
+}));
+
+// Fallback handler for client HTML pages and API 404s
 app.use((req, res) => {
+  if (req.path.startsWith("/api") || req.method !== "GET") {
+    return res.status(404).json({ message: "Route not found" });
+  }
+  const fs = require("fs");
+  const cleanPath = req.path === "/" ? "index.html" : req.path.replace(/^\//, "");
+  const directPath = path.join(__dirname, "..", cleanPath);
+  if (fs.existsSync(directPath) && fs.statSync(directPath).isFile()) {
+    return res.sendFile(directPath);
+  }
+  const htmlPath = directPath + ".html";
+  if (fs.existsSync(htmlPath) && fs.statSync(htmlPath).isFile()) {
+    return res.sendFile(htmlPath);
+  }
+  const notFoundPage = path.join(__dirname, "..", "404.html");
+  if (fs.existsSync(notFoundPage)) {
+    return res.status(404).sendFile(notFoundPage);
+  }
   res.status(404).json({ message: "Route not found" });
 });
 
