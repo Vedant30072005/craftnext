@@ -596,6 +596,12 @@ function enterOTPMode(email) {
   pendingEmail = email;
   localStorage.setItem("verify_email", email);
   mode = "verify";
+  document.getElementById("authTitle").textContent = "Verify Email OTP";
+  document.getElementById("authSubtitle").textContent = `Enter the 6-digit code sent to ${email} (check Inbox or Spam folder)`;
+  document.getElementById("nameGroup").style.display = "none";
+  document.getElementById("emailInput").closest(".form-group").style.display = "none";
+  document.getElementById("roleTabs").style.display = "none";
+  document.getElementById("sellerFields").classList.remove("show");
   document.getElementById("otpGroup").style.display = "block";
   document.getElementById("otpHelper").style.display = "block";
   document.getElementById("passwordGroup").style.display = "none";

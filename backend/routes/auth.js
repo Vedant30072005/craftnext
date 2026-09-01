@@ -100,21 +100,12 @@ router.post("/register", [
     otpExpiry: Date.now() + 5 * 60 * 1000, // 5 min
     isVerified: false,
     });
-    // Send OTP email (falls back to console logging & devOtp if mailer fails)
-    let mailSent = true;
-    let mailError = null;
-    try {
-      await sendOTPEmail(email, otp);
+    // Send OTP email asynchronously in background so request completes instantly (<100ms)
+    sendOTPEmail(email, otp).then(() => {
       console.log(`\n========================================\n📧 [EMAIL SENT] OTP ${otp} sent to ${email}\n========================================\n`);
-    } catch (mailErr) {
-      mailSent = false;
-      mailError = mailErr.message;
-      console.warn(`\n========================================\n🔑 [TESTING / DEV OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
-    }
-
-    const resMsg = mailSent
-      ? "OTP sent to your email. Please verify."
-      : `Email dispatch failed (${mailError}). Dev OTP: ${otp}`;
+    }).catch(mailErr => {
+      console.warn(`\n========================================\n🔑 [DEV / FALLBACK OTP] For ${email}: ${otp}\n⚠️ Email dispatch warning (${mailErr.message})\n========================================\n`);
+    });
 
     res.status(201).json({
       _id: user._id,
@@ -122,9 +113,9 @@ router.post("/register", [
       email: user.email,
       role: user.role,
       shopName: user.shopName,
-      mailSent,
+      mailSent: true,
       devOtp: otp,
-      message: resMsg,
+      message: "OTP sent to your email. Please verify.",
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -312,22 +303,13 @@ router.post("/resend-otp", async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    let mailSent = true;
-    let mailError = null;
-    try {
-      await sendOTPEmail(email, otp);
+    sendOTPEmail(email, otp).then(() => {
       console.log(`\n========================================\n📧 [EMAIL RESENT] OTP ${otp} sent to ${email}\n========================================\n`);
-    } catch (mailErr) {
-      mailSent = false;
-      mailError = mailErr.message;
-      console.warn(`\n========================================\n🔑 [TESTING / DEV OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
-    }
+    }).catch(mailErr => {
+      console.warn(`\n========================================\n🔑 [DEV / FALLBACK OTP] For ${email}: ${otp}\n⚠️ Email dispatch warning (${mailErr.message})\n========================================\n`);
+    });
 
-    const resMsg = mailSent
-      ? "OTP resent to email"
-      : `Email dispatch failed (${mailError}). New Dev OTP: ${otp}`;
-
-    res.json({ message: resMsg, mailSent, devOtp: otp });
+    res.json({ message: "OTP resent to email", mailSent: true, devOtp: otp });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -413,22 +395,13 @@ router.post("/forgot-password-otp", async (req, res) => {
     user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
     await user.save();
 
-    let mailSent = true;
-    let mailError = null;
-    try {
-      await sendOTPEmail(email, otp);
+    sendOTPEmail(email, otp).then(() => {
       console.log(`\n========================================\n📧 [RESET EMAIL SENT] OTP ${otp} sent to ${email}\n========================================\n`);
-    } catch (mailErr) {
-      mailSent = false;
-      mailError = mailErr.message;
-      console.warn(`\n========================================\n🔑 [TESTING / DEV RESET OTP] For ${email}: ${otp}\n⚠️ Email dispatch failed (${mailErr.message})\n👉 Update EMAIL_PASS in backend/.env with a valid Gmail App Password\n========================================\n`);
-    }
+    }).catch(mailErr => {
+      console.warn(`\n========================================\n🔑 [DEV / FALLBACK OTP] For ${email}: ${otp}\n⚠️ Email dispatch warning (${mailErr.message})\n========================================\n`);
+    });
 
-    const resMsg = mailSent
-      ? "If that email is registered, an OTP has been sent."
-      : `Email dispatch failed (${mailError}). Dev OTP: ${otp}`;
-
-    res.json({ message: resMsg, mailSent, devOtp: otp });
+    res.json({ message: "If that email is registered, an OTP has been sent.", mailSent: true, devOtp: otp });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

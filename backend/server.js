@@ -1,6 +1,4 @@
 require("dotenv").config({ path: require("path").join(__dirname, ".env") });
-const dns = require("dns");
-dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
 // In production, an unset CLIENT_URL must not silently fall back to "*" —
 // fail at startup instead of shipping an open CORS policy.

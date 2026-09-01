@@ -11,6 +11,7 @@ const multer = require("multer");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+app.set("trust proxy", 1);
 
 // Rate limit auth endpoints: 20 requests / 15 min per IP
 const authLimiter = rateLimit({

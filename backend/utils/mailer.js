@@ -1,14 +1,22 @@
 const nodemailer = require("nodemailer");
 
+const rawPass = process.env.EMAIL_PASS || "";
+const cleanPass = rawPass.replace(/\s+/g, "");
+
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // SSL
+  pool: true,   // reuse connection pool for fast email dispatches
+  maxConnections: 5,
+  maxMessages: 100,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Gmail App Password (not account password)
+    pass: cleanPass,
   },
-  connectionTimeout: 10000, // 10s — fail fast if Gmail is unreachable
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
+  connectionTimeout: 5000,
+  greetingTimeout: 5000,
+  socketTimeout: 5000,
 });
 
 async function sendOTPEmail(to, otp) {
