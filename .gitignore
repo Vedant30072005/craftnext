@@ -14,6 +14,7 @@ backend/uploads/*
 *.log
 .DS_Store
 Thumbs.db
+~$*
 
 # JARVIS personal-data exports — never commit financial backups (ORD-1508a)
 jarvis-backup-*.json

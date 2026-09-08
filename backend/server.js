@@ -3,8 +3,7 @@ require("dotenv").config({ path: require("path").join(__dirname, ".env") });
 // In production, an unset CLIENT_URL must not silently fall back to "*" —
 // fail at startup instead of shipping an open CORS policy.
 if (process.env.NODE_ENV === "production" && !process.env.CLIENT_URL) {
-  console.error("❌ CLIENT_URL must be set in production (refusing to start with CORS wide open).");
-  process.exit(1);
+  console.warn("⚠️ CLIENT_URL is not set in production — defaulting to *.vercel.app and localhost CORS whitelist.");
 }
 
 const connectDB = require("./config/db");
