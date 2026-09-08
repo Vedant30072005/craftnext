@@ -12,11 +12,13 @@ const { protect } = require("../middleware/auth");
 const { sendOTPEmail, sendResetEmail } = require("../utils/mailer");
 
 
+const JWT_SECRET = process.env.JWT_SECRET || "craftnext-super-secure-production-secret-key-2026";
+
 // Generate JWT. Carries the role so pure authorization checks can read it
 // straight from the token; middleware still loads the fresh user doc so a
 // suspension or role change takes effect immediately (not at token expiry).
 const generateToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
 };
 
 /* ================= AVATAR UPLOAD ================= */

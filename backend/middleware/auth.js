@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+const JWT_SECRET = process.env.JWT_SECRET || "craftnext-super-secure-production-secret-key-2026";
+
 // Helper to parse cookies from headers without dependency
 const parseCookies = (cookieHeader) => {
   const list = {};
@@ -28,7 +30,7 @@ const protect = async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
       req.user = await User.findById(decoded.id).select("-password");
 
       // Token is valid but the account is gone or suspended — reject now
@@ -63,7 +65,7 @@ const optionalProtect = async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
       const user = await User.findById(decoded.id).select("-password");
       // Only attach a live, non-suspended account. A suspended or deleted
       // user simply proceeds as a guest here (this route supports guests).
