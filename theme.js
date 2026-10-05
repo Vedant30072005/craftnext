@@ -61,4 +61,25 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (adminTopbar) {
         adminTopbar.appendChild(createToggleButton());
     }
+
+    // Ensure clicking CraftNext logo always redirects cleanly to the home page
+    function initBrandLinks() {
+        document.querySelectorAll('a.brand').forEach((brandLink) => {
+            if (location.protocol === 'file:') {
+                brandLink.setAttribute('href', 'index.html');
+            } else {
+                brandLink.setAttribute('href', '/');
+            }
+            brandLink.addEventListener('click', (e) => {
+                if (!e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                    if (location.protocol.startsWith('http')) {
+                        e.preventDefault();
+                        window.location.href = '/';
+                    }
+                }
+            });
+        });
+    }
+
+    initBrandLinks();
 });

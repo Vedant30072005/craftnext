@@ -342,9 +342,9 @@
 
 <header>
   <nav class="navbar">
-    <a class="brand" href="index.html">CraftNext</a>
+    <a class="brand" href="/">CraftNext</a>
     <div class="nav-links">
-      <a href="index.html">Home</a>
+      <a href="/">Home</a>
       <a href="wishlist.html">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.65-9.5 9-9.5 9Z"/></svg>
         Wishlist
@@ -570,7 +570,7 @@ async function loadOrders() {
     const box = document.getElementById("ordersList");
 
     if (!orders.length) {
-      box.innerHTML = `<div class="empty-state"><p>No orders yet. Start shopping!</p><br><a href="index.html" style="color:var(--accent-ink)">Browse Products →</a></div>`;
+      box.innerHTML = `<div class="empty-state"><p>No orders yet. Start shopping!</p><br><a href="/" style="color:var(--accent-ink)">Browse Products →</a></div>`;
       return;
     }
 

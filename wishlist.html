@@ -25,10 +25,10 @@
 <!-- NAVBAR -->
 
 <header class="navbar">
-    <a class="brand" href="index.html">CraftNext</a>
+    <a class="brand" href="/">CraftNext</a>
 
     <div class="nav-links">
-        <a href="index.html" class="back-btn">← Back to Home</a>
+        <a href="/" class="back-btn">← Back to Home</a>
         <span id="navUser"></span>
     </div>
 </header>
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const grid = document.getElementById("wishGrid");
 
     if (ids.length === 0) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Your wishlist is empty</h3><p><a href="index.html">Browse products →</a></p></div>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>Your wishlist is empty</h3><p><a href="/">Browse products →</a></p></div>`;
         return;
     }
 
